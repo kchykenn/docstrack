@@ -1,0 +1,30 @@
+{
+    "name": "doh/docstrack",
+    "description": "",
+    "authors": [
+        {
+            "name": "DOH KMITS",
+            "email": "noreply.ihomis@doh.gov.ph"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\DocsTrack\\": "app/",
+            "Modules\\DocsTrack\\Database\\Factories\\": "database/factories/",
+            "Modules\\DocsTrack\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\DocsTrack\\Tests\\": "tests/"
+        }
+    }
+}

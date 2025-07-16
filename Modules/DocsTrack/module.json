@@ -1,0 +1,11 @@
+{
+    "name": "DocsTrack",
+    "alias": "docstrack",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\DocsTrack\\Providers\\DocsTrackServiceProvider"
+    ],
+    "files": []
+}
