@@ -2,8 +2,8 @@ import * as React from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import type { BreadcrumbItem } from '@/types';
-import { NavigationMenuDtrack } from '../components/NavigationMenuDtrack';
-import { DataTableDtrack } from '../components/DataTableDtrack';
+// import { NavigationMenuDtrack } from '../components/NavigationMenuDtrack';
+// import { DataTableDtrack } from '../components/DataTableDtrack';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -17,12 +17,7 @@ const OtherIndex: React.FC = () => {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Others" />
-      <div className="relative z-0">
-        <NavigationMenuDtrack />
-        <div className="p-4">
-          <DataTableDtrack />
-        </div>
-      </div>
+        edit here
     </AppLayout>
   );
 };

@@ -14,6 +14,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
+import AppLogoDTrack from '@/components/app-logoDTrack';
 
 
 export function NavigationMenuDtrack() {
@@ -35,10 +36,11 @@ export function NavigationMenuDtrack() {
                     className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
                     href="/"
                   >
-                    <div className="mt-4 mb-2 text-lg font-medium">
-                      LOGO HERE
+                    <div className="mt-4 mb-2 text-lg font-medium flex flex-col items-center">
+                      <AppLogoDTrack />
+                      CHD CARAGA
                     </div>
-                    <p className="text-muted-foreground text-xs leading-tight">
+                    <p className="text-muted-foreground text-xs leading-tight text-center">
                       Department of Health - Caraga Region Documents Tracking System
                     </p>
                   </a>

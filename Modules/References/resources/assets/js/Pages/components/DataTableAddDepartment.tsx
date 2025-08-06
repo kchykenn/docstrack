@@ -13,7 +13,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, FilePlus, FileText } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, FilePlus, FileText, ClipboardCopy } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -36,49 +36,50 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import { AddDocsTrack } from "../modal/AddDocsTrack"
+import { AddDocsTrack } from "../modal/Department/AddDepartment"
 
-const data: Payment[] = [
+// Update your data and type to match the new columns
+const data: Department[] = [
     {
         id: "m5gr84i9",
-        amount: 316,
-        status: "success",
-        email: "ken99@example.com",
+        departmentCode: "FIN-001",
+        departmentName: "Finance Department",
+        division: "Finance",
     },
     {
         id: "3u1reuv4",
-        amount: 242,
-        status: "success",
-        email: "Abe45@example.com",
+        departmentCode: "HR-002",
+        departmentName: "Human Resources",
+        division: "HR",
     },
     {
         id: "derv1ws0",
-        amount: 837,
-        status: "processing",
-        email: "Monserrat44@example.com",
+        departmentCode: "IT-003",
+        departmentName: "Information Technology",
+        division: "IT",
     },
     {
         id: "5kma53ae",
-        amount: 874,
-        status: "success",
-        email: "Silas22@example.com",
+        departmentCode: "ADM-004",
+        departmentName: "Administration",
+        division: "Admin",
     },
     {
         id: "bhqecj4p",
-        amount: 721,
-        status: "failed",
-        email: "carmella@example.com",
+        departmentCode: "LEG-005",
+        departmentName: "Legal Affairs",
+        division: "Legal",
     },
 ]
 
-export type Payment = {
+export type Department = {
     id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
+    departmentCode: string
+    departmentName: string
+    division: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Department>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -106,16 +107,16 @@ export const columns: ColumnDef<Payment>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "status",
+        accessorKey: "departmentCode",
         header: () => (
-            <div className="bg-black text-white px-2 py-1">Status</div>
+            <div className="bg-black text-white px-2 py-1">Department Code</div>
         ),
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("status")}</div>
+            <div>{row.getValue("departmentCode")}</div>
         ),
     },
     {
-        accessorKey: "email",
+        accessorKey: "departmentName",
         header: ({ column }) => (
             <div className="bg-black text-white px-2 py-1">
                 <Button
@@ -125,31 +126,25 @@ export const columns: ColumnDef<Payment>[] = [
                     }
                     className="text-white hover:text-gray-200"
                 >
-                    Email
+                    Department Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             </div>
         ),
         cell: ({ row }) => (
-            <div className="lowercase">{row.getValue("email")}</div>
+            <div>{row.getValue("departmentName")}</div>
         ),
     },
     {
-        accessorKey: "amount",
+        accessorKey: "division",
         header: () => (
             <div className="bg-black text-white text-right px-2 py-1">
-                Amount
+                Division
             </div>
         ),
-        cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("amount"))
-            const formatted = new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-            }).format(amount)
-
-            return <div className="text-right font-medium">{formatted}</div>
-        },
+        cell: ({ row }) => (
+            <div className="text-right font-medium">{row.getValue("division")}</div>
+        ),
     },
     {
         id: "actions",
@@ -158,7 +153,7 @@ export const columns: ColumnDef<Payment>[] = [
             <div className="bg-black text-white text-center px-2 py-1">Actions</div>
         ),
         cell: ({ row }) => {
-            const payment = row.original
+            const department = row.original
 
             return (
                 <div className="w-full flex justify-center">
@@ -171,14 +166,23 @@ export const columns: ColumnDef<Payment>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="center">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(payment.id)}
-                            >
-                                Copy payment ID
+
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(department.id)}>
+                                <ClipboardCopy className="w-4 h-4 mr-2" />
+                                Copy Department Name
                             </DropdownMenuItem>
+
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View customer</DropdownMenuItem>
-                            <DropdownMenuItem>View payment details</DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                                <FileText className="w-4 h-4 mr-2" />
+                                View Department
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                                <FilePlus className="w-4 h-4 mr-2" />
+                                Edit Department
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -187,15 +191,11 @@ export const columns: ColumnDef<Payment>[] = [
     },
 ]
 
-
-export function DataTableAddDtrack() {
+export function DataTableAddDepartment() {
     const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
@@ -221,7 +221,7 @@ export function DataTableAddDtrack() {
         <div className="w-full">
             <span className="text-ml font-medium mb-2 flex items-center gap-2 text-left">
                 <FileText className="w-5 h-5 text-primary" />
-                List of Added Documents
+                List of All Departments
             </span>
             <AddDocsTrack open={open} onOpenChange={setOpen} />
 
@@ -233,10 +233,10 @@ export function DataTableAddDtrack() {
                     Add New
                 </Button>
                 <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter department name..."
+                    value={(table.getColumn("departmentName")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("departmentName")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />

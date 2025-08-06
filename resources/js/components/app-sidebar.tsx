@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { File, Folder, Monitor, LayoutGrid } from 'lucide-react';
+import { File, Folder, Monitor, LayoutGrid, Book } from 'lucide-react'; // Added Book icon
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -28,6 +28,26 @@ const mainNavItems: NavItem[] = [
 ];
 
 const footerNavItems: NavItem[] = [
+    {
+        title: 'References',
+        href: '#',
+        icon: Folder,
+        isActive: false,
+        items: [
+            {
+                title: 'Division',
+                href: '/addDivision',
+            },
+            {
+                title: 'Department',
+                href: '/addDepartment',
+            },
+            {
+                title: 'Document Type',
+                href: '/addDocsType',
+            },
+        ],
+    },
     {
         title: 'Identity Access Mgmt',
         href: '#',

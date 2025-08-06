@@ -13,7 +13,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, FilePlus, FileText } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, FilePlus, FileText, ClipboardCopy } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -36,49 +36,43 @@ import {
     TableRow,
 } from "@/components/ui/table"
 
-import { AddDocsTrack } from "../modal/AddDocsTrack"
+import { AddDivision } from "../modal/Division/AddDivision"
 
-const data: Payment[] = [
+const data: Division[] = [
     {
         id: "m5gr84i9",
-        amount: 316,
-        status: "success",
-        email: "ken99@example.com",
+        departmentCode: "FIN-001",
+        division: "Finance",
     },
     {
         id: "3u1reuv4",
-        amount: 242,
-        status: "success",
-        email: "Abe45@example.com",
+        departmentCode: "HR-002",
+        division: "HR",
     },
     {
         id: "derv1ws0",
-        amount: 837,
-        status: "processing",
-        email: "Monserrat44@example.com",
+        departmentCode: "IT-003",
+        division: "IT",
     },
     {
         id: "5kma53ae",
-        amount: 874,
-        status: "success",
-        email: "Silas22@example.com",
+        departmentCode: "ADM-004",
+        division: "Admin",
     },
     {
         id: "bhqecj4p",
-        amount: 721,
-        status: "failed",
-        email: "carmella@example.com",
+        departmentCode: "LEG-005",
+        division: "Legal",
     },
 ]
 
-export type Payment = {
+export type Division = {
     id: string
-    amount: number
-    status: "pending" | "processing" | "success" | "failed"
-    email: string
+    departmentCode: string
+    division: string
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Division>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -106,16 +100,16 @@ export const columns: ColumnDef<Payment>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "status",
+        accessorKey: "departmentCode",
         header: () => (
-            <div className="bg-black text-white px-2 py-1">Status</div>
+            <div className="bg-black text-white px-2 py-1">Division Code</div>
         ),
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("status")}</div>
+            <div>{row.getValue("departmentCode")}</div>
         ),
     },
     {
-        accessorKey: "email",
+        accessorKey: "division",
         header: ({ column }) => (
             <div className="bg-black text-white px-2 py-1">
                 <Button
@@ -125,32 +119,16 @@ export const columns: ColumnDef<Payment>[] = [
                     }
                     className="text-white hover:text-gray-200"
                 >
-                    Email
+                    Division Name
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             </div>
         ),
         cell: ({ row }) => (
-            <div className="lowercase">{row.getValue("email")}</div>
+            <div>{row.getValue("division")}</div>
         ),
     },
-    {
-        accessorKey: "amount",
-        header: () => (
-            <div className="bg-black text-white text-right px-2 py-1">
-                Amount
-            </div>
-        ),
-        cell: ({ row }) => {
-            const amount = parseFloat(row.getValue("amount"))
-            const formatted = new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-            }).format(amount)
 
-            return <div className="text-right font-medium">{formatted}</div>
-        },
-    },
     {
         id: "actions",
         enableHiding: false,
@@ -158,7 +136,7 @@ export const columns: ColumnDef<Payment>[] = [
             <div className="bg-black text-white text-center px-2 py-1">Actions</div>
         ),
         cell: ({ row }) => {
-            const payment = row.original
+            const division = row.original
 
             return (
                 <div className="w-full flex justify-center">
@@ -171,14 +149,23 @@ export const columns: ColumnDef<Payment>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="center">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(payment.id)}
-                            >
-                                Copy payment ID
+
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(division.id)}>
+                                <ClipboardCopy className="w-4 h-4 mr-2" />
+                                Copy Division Name
                             </DropdownMenuItem>
+
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View customer</DropdownMenuItem>
-                            <DropdownMenuItem>View payment details</DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                                <FileText className="w-4 h-4 mr-2" />
+                                View Division
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem>
+                                <FilePlus className="w-4 h-4 mr-2" />
+                                Edit Division
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -187,15 +174,11 @@ export const columns: ColumnDef<Payment>[] = [
     },
 ]
 
-
-export function DataTableAddDtrack() {
+export function DataTableAddDivision() {
     const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
@@ -221,9 +204,9 @@ export function DataTableAddDtrack() {
         <div className="w-full">
             <span className="text-ml font-medium mb-2 flex items-center gap-2 text-left">
                 <FileText className="w-5 h-5 text-primary" />
-                List of Added Documents
+                List of All Division
             </span>
-            <AddDocsTrack open={open} onOpenChange={setOpen} />
+            <AddDivision open={open} onOpenChange={setOpen} />
 
             <div className="flex items-center py-4 gap-2">
                 <Button
@@ -233,10 +216,10 @@ export function DataTableAddDtrack() {
                     Add New
                 </Button>
                 <Input
-                    placeholder="Filter emails..."
-                    value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                    placeholder="Filter division name..."
+                    value={(table.getColumn("division")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("email")?.setFilterValue(event.target.value)
+                        table.getColumn("division")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />

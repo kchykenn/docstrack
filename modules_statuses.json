@@ -2,5 +2,6 @@
     "IAM": true,
     "Core": true,
     "Auth": true,
-    "DocsTrack": true
+    "DocsTrack": true,
+    "References": true
 }
