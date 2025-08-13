@@ -1,8 +1,9 @@
 import * as React from 'react';
 import AppLayout from '@/layouts/app-layout';
+import { usePage } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import type { BreadcrumbItem } from '@/types';
-import { DataTableAddDivision } from '../components/DataTableAddDivision';
+import { DataTableAddDivision, Division } from '../components/DataTableAddDivision';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -12,15 +13,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 ];
 
-const OtherIndex: React.FC = () => {
+const DivisionIndex: React.FC = () => {
+  const { props } = usePage<{ autoDivisionCode: string, divisions: unknown[] }>();
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
-      <Head title="Add Division" />
-        <div className="mt-4 p-4">
-          <DataTableAddDivision />
-        </div>
+      <Head title="References Division" />
+      <div className="mt-4 p-4">
+        <DataTableAddDivision
+          autoDivisionCode={props.autoDivisionCode}
+          divisions={props.divisions as Division[]}
+        />
+      </div>
     </AppLayout>
   );
-};
+};;
 
-export default OtherIndex;
+export default DivisionIndex;

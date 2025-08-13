@@ -6,15 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
-class Division extends Model
+class Department extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'tbl_divisions';
+    protected $table = 'tbl_department';
 
     protected $fillable = [
-        'division_code',
+        'depart_code',
         'division_name',
+        'depart_name',
         'div_stat',
         'ts_created_at',
         'ts_updated_at',

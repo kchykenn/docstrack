@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useForm } from "@inertiajs/react";
+import { useForm, router } from "@inertiajs/react";
 
 import {
   Dialog,
@@ -27,9 +27,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { X, Save } from "lucide-react";
 import AppLogoDepartDiv from "@/components/app-logoDepartDiv";
 
-export function AddDivision({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
+export function AddDivision({ open, onOpenChange, autoDivisionCode }: { open: boolean, onOpenChange: (open: boolean) => void, autoDivisionCode: string }) {
   const { data, setData, post, processing, reset, errors } = useForm({
-    depart_code:"",
+    depart_code: autoDivisionCode || "",
     depart_name: "",
     div_stat: "",
   });
@@ -37,10 +37,12 @@ export function AddDivision({ open, onOpenChange }: { open: boolean, onOpenChang
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    post(route('storeDivision.storeDiv'), {
+    post('/storeDivision', {
       onSuccess: () => {
+        alert("Division added successfully!");
         reset();
         onOpenChange(false);
+        router.visit('/addDivision');
       },
     });
   };

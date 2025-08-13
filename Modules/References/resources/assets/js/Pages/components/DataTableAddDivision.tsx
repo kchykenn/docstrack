@@ -16,7 +16,7 @@ import {
 import { ArrowUpDown, ChevronDown, MoreHorizontal, FilePlus, FileText, ClipboardCopy } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
+
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -38,78 +38,25 @@ import {
 
 import { AddDivision } from "../modal/Division/AddDivision"
 
-const data: Division[] = [
-    {
-        id: "m5gr84i9",
-        departmentCode: "FIN-001",
-        division: "Finance",
-    },
-    {
-        id: "3u1reuv4",
-        departmentCode: "HR-002",
-        division: "HR",
-    },
-    {
-        id: "derv1ws0",
-        departmentCode: "IT-003",
-        division: "IT",
-    },
-    {
-        id: "5kma53ae",
-        departmentCode: "ADM-004",
-        division: "Admin",
-    },
-    {
-        id: "bhqecj4p",
-        departmentCode: "LEG-005",
-        division: "Legal",
-    },
-]
-
 export type Division = {
     id: string
-    departmentCode: string
-    division: string
+    division_code: string
+    division_name: string
+    div_stat: string
 }
 
 export const columns: ColumnDef<Division>[] = [
     {
-        id: "select",
-        header: ({ table }) => (
-            <div className="bg-black text-white px-2 py-1">
-                <Checkbox
-                    checked={
-                        table.getIsAllPageRowsSelected() ||
-                        (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
-                    onCheckedChange={(value) =>
-                        table.toggleAllPageRowsSelected(!!value)
-                    }
-                    aria-label="Select all"
-                />
-            </div>
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "departmentCode",
+        accessorKey: "division_code",
         header: () => (
             <div className="bg-black text-white px-2 py-1">Division Code</div>
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("departmentCode")}</div>
+            <div>{row.getValue("division_code")}</div>
         ),
     },
     {
-        accessorKey: "division",
+        accessorKey: "division_name",
         header: ({ column }) => (
             <div className="bg-black text-white px-2 py-1">
                 <Button
@@ -125,56 +72,51 @@ export const columns: ColumnDef<Division>[] = [
             </div>
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("division")}</div>
+            <div>{row.getValue("division_name")}</div>
         ),
     },
 
     {
-        id: "actions",
-        enableHiding: false,
+        accessorKey: "div_stat",
         header: () => (
-            <div className="bg-black text-white text-center px-2 py-1">Actions</div>
+            <div className="bg-black text-white px-2 py-1">Status</div>
         ),
-        cell: ({ row }) => {
-            const division = row.original
-
-            return (
-                <div className="w-full flex justify-center">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="center">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(division.id)}>
-                                <ClipboardCopy className="w-4 h-4 mr-2" />
-                                Copy Division Name
-                            </DropdownMenuItem>
-
-                            <DropdownMenuSeparator />
-
-                            <DropdownMenuItem>
-                                <FileText className="w-4 h-4 mr-2" />
-                                View Division
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem>
-                                <FilePlus className="w-4 h-4 mr-2" />
-                                Edit Division
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            )
-        },
+        cell: ({ row }) => (
+            <div className="flex items-center gap-2">
+                <span>
+                    {row.getValue("div_stat") == "1" ? "Active" : "Inactive"}
+                </span>
+                {/* Actions dropdown */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="center">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.original.id)}>
+                            <ClipboardCopy className="w-4 h-4 mr-2" />
+                            Copy Division Name
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                            <FileText className="w-4 h-4 mr-2" />
+                            View Division
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <FilePlus className="w-4 h-4 mr-2" />
+                            Edit Division
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        ),
     },
 ]
 
-export function DataTableAddDivision() {
+export function DataTableAddDivision({ autoDivisionCode, divisions, }: { autoDivisionCode: string, divisions: Division[] }) {
     const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -182,7 +124,7 @@ export function DataTableAddDivision() {
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
-        data,
+        data: divisions,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -206,7 +148,8 @@ export function DataTableAddDivision() {
                 <FileText className="w-5 h-5 text-primary" />
                 List of All Division
             </span>
-            <AddDivision open={open} onOpenChange={setOpen} />
+
+            <AddDivision open={open} onOpenChange={setOpen} autoDivisionCode={autoDivisionCode} />
 
             <div className="flex items-center py-4 gap-2">
                 <Button

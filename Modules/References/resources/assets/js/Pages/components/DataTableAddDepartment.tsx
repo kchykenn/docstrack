@@ -38,46 +38,13 @@ import {
 
 import { AddDocsTrack } from "../modal/Department/AddDepartment"
 
-// Update your data and type to match the new columns
-const data: Department[] = [
-    {
-        id: "m5gr84i9",
-        departmentCode: "FIN-001",
-        departmentName: "Finance Department",
-        division: "Finance",
-    },
-    {
-        id: "3u1reuv4",
-        departmentCode: "HR-002",
-        departmentName: "Human Resources",
-        division: "HR",
-    },
-    {
-        id: "derv1ws0",
-        departmentCode: "IT-003",
-        departmentName: "Information Technology",
-        division: "IT",
-    },
-    {
-        id: "5kma53ae",
-        departmentCode: "ADM-004",
-        departmentName: "Administration",
-        division: "Admin",
-    },
-    {
-        id: "bhqecj4p",
-        departmentCode: "LEG-005",
-        departmentName: "Legal Affairs",
-        division: "Legal",
-    },
-]
-
 export type Department = {
-    id: string
-    departmentCode: string
-    departmentName: string
-    division: string
-}
+    id: string;
+    depart_code: string;
+    division_name: string;
+    depart_name: string;
+    depart_stat: string;
+};
 
 export const columns: ColumnDef<Department>[] = [
     {
@@ -107,16 +74,16 @@ export const columns: ColumnDef<Department>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "departmentCode",
+        accessorKey: "depart_code",
         header: () => (
             <div className="bg-black text-white px-2 py-1">Department Code</div>
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("departmentCode")}</div>
+            <div>{row.getValue("depart_code")}</div>
         ),
     },
     {
-        accessorKey: "departmentName",
+        accessorKey: "depart_name",
         header: ({ column }) => (
             <div className="bg-black text-white px-2 py-1">
                 <Button
@@ -132,66 +99,61 @@ export const columns: ColumnDef<Department>[] = [
             </div>
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("departmentName")}</div>
+            <div>{row.getValue("depart_name")}</div>
         ),
     },
     {
-        accessorKey: "division",
+        accessorKey: "division_name",
         header: () => (
             <div className="bg-black text-white text-right px-2 py-1">
                 Division
             </div>
         ),
         cell: ({ row }) => (
-            <div className="text-right font-medium">{row.getValue("division")}</div>
+            <div className="text-right font-medium">{row.getValue("division_name")}</div>
         ),
     },
     {
-        id: "actions",
-        enableHiding: false,
+        accessorKey: "depart_stat",
         header: () => (
-            <div className="bg-black text-white text-center px-2 py-1">Actions</div>
+            <div className="bg-black text-white px-2 py-1">Status</div>
         ),
-        cell: ({ row }) => {
-            const department = row.original
-
-            return (
-                <div className="w-full flex justify-center">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="center">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(department.id)}>
-                                <ClipboardCopy className="w-4 h-4 mr-2" />
-                                Copy Department Name
-                            </DropdownMenuItem>
-
-                            <DropdownMenuSeparator />
-
-                            <DropdownMenuItem>
-                                <FileText className="w-4 h-4 mr-2" />
-                                View Department
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem>
-                                <FilePlus className="w-4 h-4 mr-2" />
-                                Edit Department
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            )
-        },
+        cell: ({ row }) => (
+            <div className="flex items-center gap-2">
+                <span>
+                    {row.getValue("depart_stat") == "1" ? "Active" : "Inactive"}
+                </span>
+                {/* Actions dropdown */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="center">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(row.original.id)}>
+                            <ClipboardCopy className="w-4 h-4 mr-2" />
+                            Copy Department Name
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                            <FileText className="w-4 h-4 mr-2" />
+                            View Department
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                            <FilePlus className="w-4 h-4 mr-2" />
+                            Edit Department
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        ),
     },
-]
+];
 
-export function DataTableAddDepartment() {
+export function DataTableAddDepartment({ divisions, autoDepartCode, department }: { divisions: { id: number, division_name: string }[], autoDepartCode: string, department: Department[] }) {
     const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -199,7 +161,7 @@ export function DataTableAddDepartment() {
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
-        data,
+        data: department,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -223,7 +185,8 @@ export function DataTableAddDepartment() {
                 <FileText className="w-5 h-5 text-primary" />
                 List of All Departments
             </span>
-            <AddDocsTrack open={open} onOpenChange={setOpen} />
+
+            <AddDocsTrack open={open} onOpenChange={setOpen} divisions={divisions} autoDepartCode={autoDepartCode} />
 
             <div className="flex items-center py-4 gap-2">
                 <Button
