@@ -82,11 +82,19 @@ export const columns: ColumnDef<Division>[] = [
             <div className="bg-black text-white px-2 py-1">Status</div>
         ),
         cell: ({ row }) => (
-            <div className="flex items-center gap-2">
-                <span>
-                    {row.getValue("div_stat") == "1" ? "Active" : "Inactive"}
-                </span>
-                {/* Actions dropdown */}
+            <span>
+                {row.getValue("div_stat") == "1" ? "Active" : "Inactive"}
+            </span>
+        ),
+    },
+    {
+        id: "actions",
+        enableHiding: false,
+        header: () => (
+            <div className="bg-black text-white text-center px-2 py-1">Actions</div>
+        ),
+        cell: ({ row }) => (
+            <div className="flex justify-center">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
