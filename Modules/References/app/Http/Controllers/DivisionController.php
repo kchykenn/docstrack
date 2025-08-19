@@ -25,7 +25,7 @@ class DivisionController extends Controller
 
         $divisions = DB::table('tbl_divisions')
             ->select('id', 'division_code', 'division_name', 'div_stat')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         return Inertia::render('References::AddDivision/index', [

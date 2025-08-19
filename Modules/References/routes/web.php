@@ -15,5 +15,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('/addDocsType', [DocsTypeController::class, 'index'])->name('addDivision.index');
-    
+    Route::post('/storeDocsType', [DocsTypeController::class, 'storeDocsType'])->name('storeDocsType.storeDocsType');
 });

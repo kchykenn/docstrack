@@ -3,36 +3,39 @@
 namespace Modules\DocsTrack\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Modules\Referrences\Models\DocumentType;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\Request;
 
 class DocsTrackController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         return Inertia::render('DocsTrack::DocumTrack/index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        return Inertia::render('DocsTrack::DocumTrack/AddDtrack');
+        $docstype = DB::table('tbl_documtype')
+            ->select('id', 'docs_code', 'docs_name', 'docs_stat')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return Inertia::render('DocsTrack::DocumTrack/AddDtrack', [
+            'docstype' => $docstype,
+        ]);
     }
 
+    
     public function test()
     {
         return Inertia::render('DocsTrack::modal/AddDocsTrack');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
 
     public function store(Request $request) {}
 

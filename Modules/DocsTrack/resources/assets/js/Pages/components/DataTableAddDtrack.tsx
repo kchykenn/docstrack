@@ -188,7 +188,7 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 
-export function DataTableAddDtrack() {
+export function DataTableAddDtrack({ docstype }: { docstype: { id: number, docs_code: string, docs_name: string, docs_stat: string }[] }) {
     const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -223,7 +223,8 @@ export function DataTableAddDtrack() {
                 <FileText className="w-5 h-5 text-primary" />
                 List of Added Documents
             </span>
-            <AddDocsTrack open={open} onOpenChange={setOpen} />
+            
+            <AddDocsTrack open={open} onOpenChange={setOpen} docstype={docstype} />
 
             <div className="flex items-center py-4 gap-2">
                 <Button

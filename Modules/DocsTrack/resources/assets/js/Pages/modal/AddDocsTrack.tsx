@@ -24,13 +24,18 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export function AddDocsTrack({ open, onOpenChange }: { open: boolean, onOpenChange: (open: boolean) => void }) {
+export function AddDocsTrack({
+  open,
+  onOpenChange,
+  docstype,
+}: {
+  open: boolean,
+  onOpenChange: (open: boolean) => void,
+  docstype: { id: number, docs_code: string, docs_name: string, docs_stat: string }[]
+}) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-4xl top-4 !translate-y-0"
-        onInteractOutside={e => e.preventDefault()}
-      >
+      <DialogContent className="sm:max-w-4xl top-4 !translate-y-0" onInteractOutside={e => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Add Document</DialogTitle>
           <DialogDescription>
@@ -60,10 +65,6 @@ export function AddDocsTrack({ open, onOpenChange }: { open: boolean, onOpenChan
               <Textarea id="subject" name="subject" className="w-full min-h-[100px]" />
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="ref_doc_con_no">Reference Document Control No.</Label>
-              <Input id="ref_doc_con_no" name="ref_doc_con_no" />
-            </div>
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="doc_type">Document Type<strong className="text-red-500">*</strong></Label>
@@ -74,10 +75,11 @@ export function AddDocsTrack({ open, onOpenChange }: { open: boolean, onOpenChan
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Select Docs Type</SelectLabel>
-                    <SelectItem value="memo">Memo</SelectItem>
-                    <SelectItem value="letter">Letter</SelectItem>
-                    <SelectItem value="report">Report</SelectItem>
-                    {/* Add more SelectItem as needed */}
+                    {docstype.map((type) => (
+                      <SelectItem key={type.id} value={type.id.toString()}>
+                        {type.docs_name}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

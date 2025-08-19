@@ -118,11 +118,14 @@ export const columns: ColumnDef<Department>[] = [
         header: () => (
             <div className="bg-black text-white px-2 py-1">Status</div>
         ),
-        cell: ({ row }) => (
-            <span className="px-4 min-w-[100px]">
-                {row.getValue("depart_stat") === "1" ? "Active" : "Inactive"}
-            </span>
-        ),
+        cell: ({ row }) => {
+            const isActive = row.getValue("depart_stat") == "1";
+            return (
+                <span className={isActive ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                    {isActive ? "Active" : "Inactive"}
+                </span>
+            );
+        },
     },
     {
         id: "actions",

@@ -31,7 +31,7 @@ class DepartmentController extends Controller
 
         $department = DB::table('tbl_department')
             ->select('id', 'depart_code', 'division_name', 'depart_name', 'depart_stat')
-            ->orderBy('id', 'desc')
+            ->orderBy('id', 'asc')
             ->get();
 
         return Inertia::render('References::AddDepartment/index', [

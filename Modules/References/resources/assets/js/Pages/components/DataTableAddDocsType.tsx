@@ -38,41 +38,14 @@ import {
 
 import { AddDocsType } from "../modal/DocsType/AddDocsType"
 
-const data: Division[] = [
-    {
-        id: "m5gr84i9",
-        departmentCode: "FIN-001",
-        document: "Finance",
-    },
-    {
-        id: "3u1reuv4",
-        departmentCode: "HR-002",
-        document: "HR",
-    },
-    {
-        id: "derv1ws0",
-        departmentCode: "IT-003",
-        document: "IT",
-    },
-    {
-        id: "5kma53ae",
-        departmentCode: "ADM-004",
-        document: "Admin",
-    },
-    {
-        id: "bhqecj4p",
-        departmentCode: "LEG-005",
-        document: "Legal",
-    },
-]
-
-export type Division = {
+export type DocsType = {
     id: string
-    departmentCode: string
-    document: string
+    docs_code: string;
+    docs_name: string
+    docs_stat: string;
 }
 
-export const columns: ColumnDef<Division>[] = [
+export const columns: ColumnDef<DocsType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -100,16 +73,16 @@ export const columns: ColumnDef<Division>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "departmentCode",
+        accessorKey: "docs_code",
         header: () => (
             <div className="bg-black text-white px-2 py-1">Document Code</div>
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("departmentCode")}</div>
+            <div>{row.getValue("docs_code")}</div>
         ),
     },
     {
-        accessorKey: "document",
+        accessorKey: "docs_name",
         header: ({ column }) => (
             <div className="bg-black text-white px-2 py-1">
                 <Button
@@ -125,10 +98,23 @@ export const columns: ColumnDef<Division>[] = [
             </div>
         ),
         cell: ({ row }) => (
-            <div>{row.getValue("document")}</div>
+            <div>{row.getValue("docs_name")}</div>
         ),
     },
-
+    {
+        accessorKey: "docs_stat",
+        header: () => (
+            <div className="bg-black text-white px-2 py-1">Status</div>
+        ),
+        cell: ({ row }) => {
+            const isActive = row.getValue("docs_stat") == "1";
+            return (
+                <span className={isActive ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                    {isActive ? "Active" : "Inactive"}
+                </span>
+            );
+        },
+    },
     {
         id: "actions",
         enableHiding: false,
@@ -136,8 +122,7 @@ export const columns: ColumnDef<Division>[] = [
             <div className="bg-black text-white text-center px-2 py-1">Actions</div>
         ),
         cell: ({ row }) => {
-            const division = row.original
-
+            const docstype = row.original;
             return (
                 <div className="w-full flex justify-center">
                     <DropdownMenu>
@@ -149,19 +134,15 @@ export const columns: ColumnDef<Division>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="center">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(division.id)}>
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(docstype.id)}>
                                 <ClipboardCopy className="w-4 h-4 mr-2" />
                                 Copy Docs Type
                             </DropdownMenuItem>
-
                             <DropdownMenuSeparator />
-
                             <DropdownMenuItem>
                                 <FileText className="w-4 h-4 mr-2" />
                                 View Docs Type
                             </DropdownMenuItem>
-
                             <DropdownMenuItem>
                                 <FilePlus className="w-4 h-4 mr-2" />
                                 Edit Docs Type
@@ -169,12 +150,12 @@ export const columns: ColumnDef<Division>[] = [
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-            )
+            );
         },
     },
-]
+];
 
-export function DataTableAddDocsType() {
+export function DataTableAddDocsType({ autoDocsCode, docstype, }: { autoDocsCode: string, docstype: DocsType[] }) {
     const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -182,7 +163,7 @@ export function DataTableAddDocsType() {
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
-        data,
+        data: docstype,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -207,7 +188,7 @@ export function DataTableAddDocsType() {
                 List of All Docs Type
             </span>
 
-            <AddDocsType open={open} onOpenChange={setOpen} />
+            <AddDocsType open={open} onOpenChange={setOpen} autoDocsCode={autoDocsCode} />
 
             <div className="flex items-center py-4 gap-2">
                 <Button
@@ -218,9 +199,9 @@ export function DataTableAddDocsType() {
                 </Button>
                 <Input
                     placeholder="Filter document name..."
-                    value={(table.getColumn("document")?.getFilterValue() as string) ?? ""}
+                    value={(table.getColumn("docs_name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
-                        table.getColumn("document")?.setFilterValue(event.target.value)
+                        table.getColumn("docs_name")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm"
                 />

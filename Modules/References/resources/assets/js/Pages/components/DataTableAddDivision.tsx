@@ -81,11 +81,14 @@ export const columns: ColumnDef<Division>[] = [
         header: () => (
             <div className="bg-black text-white px-2 py-1">Status</div>
         ),
-        cell: ({ row }) => (
-            <span>
-                {row.getValue("div_stat") == "1" ? "Active" : "Inactive"}
-            </span>
-        ),
+        cell: ({ row }) => {
+            const isActive = row.getValue("div_stat") == "1";
+            return (
+                <span className={isActive ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                    {isActive ? "Active" : "Inactive"}
+                </span>
+            );
+        },
     },
     {
         id: "actions",
