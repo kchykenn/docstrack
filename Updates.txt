@@ -1,0 +1,8 @@
+Create Department References for Dynamic
+Create Division References for Dynamic Adding
+Create Docs Type References for Dynamic Adding
+
+
+-Create DTrack Forms for Details Route
+
+install npm install framer-motion : for animate in sending or routing the forms

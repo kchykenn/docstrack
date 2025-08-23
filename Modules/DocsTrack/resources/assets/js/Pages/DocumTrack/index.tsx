@@ -19,7 +19,7 @@ const OtherIndex: React.FC = () => {
       <Head title="Others" />
       <div className="relative z-0">
         <NavigationMenuDtrack />
-        <div className="mt-4 p-4">
+        <div className="p-4">
           <DataTableDtrack />
         </div>
       </div>
