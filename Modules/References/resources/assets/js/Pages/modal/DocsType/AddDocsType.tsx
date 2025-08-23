@@ -118,18 +118,6 @@ export function AddDocsType({ open, onOpenChange, autoDocsCode }: { open: boolea
               </Select>
               {errors.docs_stat && <span className="text-sm text-red-500">{errors.docs_stat}</span>}
             </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="docs_name">Document Type Name<strong className="text-red-500">*</strong></Label>
-              <Textarea
-                id="docs_name"
-                name="docs_name"
-                value={data.docs_name}
-                onChange={(e) => setData("docs_name", e.target.value)}
-                className="w-full min-h-[100px]"
-              />
-              {errors.docs_name && <span className="text-sm text-red-500">{errors.docs_name}</span>}
-            </div>
             
           </div>
 
