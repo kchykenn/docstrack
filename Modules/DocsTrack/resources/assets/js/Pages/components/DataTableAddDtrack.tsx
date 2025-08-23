@@ -232,7 +232,7 @@ export function DataTableAddDtrack({
                     {table.getFilteredSelectedRowModel().rows.length} of{" "}
                     {table.getFilteredRowModel().rows.length} row(s) selected.
                 </div>
-                <div className="space-x-2">
+                <div className="flex items-center space-x-2">
                     <Button
                         variant="outline"
                         size="sm"
@@ -241,6 +241,12 @@ export function DataTableAddDtrack({
                     >
                         Previous
                     </Button>
+
+                    {/* Page info */}
+                    <span className="text-sm">
+                        Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                    </span>
+
                     <Button
                         variant="outline"
                         size="sm"
@@ -251,6 +257,7 @@ export function DataTableAddDtrack({
                     </Button>
                 </div>
             </div>
+
         </div>
     )
 }
