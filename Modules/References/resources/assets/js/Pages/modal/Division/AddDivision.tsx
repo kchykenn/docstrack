@@ -92,7 +92,8 @@ export function AddDivision({ open, onOpenChange, autoDivisionCode }: { open: bo
                 name="depart_name"
                 className="w-full min-h-[100px]"
                 value={data.depart_name}
-                onChange={(e) => setData("depart_name", e.target.value)}
+                onChange={(e) => setData("depart_name", e.target.value.toUpperCase())}
+                autoFocus
               />
               {errors.depart_name && <span className="text-sm text-red-500">{errors.depart_name}</span>}
             </div>

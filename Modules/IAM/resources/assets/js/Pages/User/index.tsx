@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table';
 import { MoreHorizontal, PlusCircleIcon } from 'lucide-react';
 import * as React from 'react';
+import { Link } from '@inertiajs/react'
 
 import { DataTablePagination } from '@/components/data-table/data-table-pagination';
 import TableSortHeader from '@/components/data-table/data-table-sort-header.jsx';
@@ -32,7 +33,7 @@ import useSorting from '@/hooks/use-sorting';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Users',
-        href: '/iam/users',
+        href: '/users',
     },
 ];
 
@@ -158,10 +159,13 @@ export default function User() {
                         setParams={setParams}
                         setTimeDebounce={setTimeDebounce}
                     />
-                    <Button className="h-8 px-2 lg:px-3">
-                        <PlusCircleIcon className="h-4 w-4" />
-                        Add
-                    </Button>
+                    <Link href="/iam/users/create">
+                        <Button className="h-8 px-2 lg:px-3">
+                            <PlusCircleIcon className="h-4 w-4" />
+                            Add
+                        </Button>
+                    </Link>
+
                     {/* <Input
                         placeholder="Filter user..."
                         value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}

@@ -33,9 +33,18 @@ import {
   ArrowLeft,
   OctagonAlert,
   Send,
-  CircleGauge,
 } from "lucide-react"
 import AppLogoDepartDiv from "@/components/app-logoDepartDiv"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export function AddDocsTrack({
   open,
@@ -66,6 +75,9 @@ export function AddDocsTrack({
     docs_destin: "",
     remarks: "",
   })
+
+  const [alertOpen, setAlertOpen] = React.useState(false)
+  const [errorAlertOpen, setErrorAlertOpen] = React.useState(false)
 
   const [localErrors, setLocalErrors] = React.useState<{ [key: string]: string }>({})
 
@@ -115,19 +127,20 @@ export function AddDocsTrack({
   const handleBackStep = () => setStep((prev) => Math.max(1, prev - 1))
 
   const handleSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) e.preventDefault()
 
     post("/dtracks/store", {
       onSuccess: () => {
-        alert("Document Routed Successfully!");
-        reset();
-        router.visit("/dtracks/create");
-        onOpenChange(false);
+        reset()
+        onOpenChange(false)
+        setAlertOpen(true)
       },
       onError: () => {
+        onOpenChange(false)
+        setErrorAlertOpen(true)
       },
-    });
-  };
+    })
+  }
 
 
   return (
@@ -246,6 +259,7 @@ export function AddDocsTrack({
                         className="w-full min-h-[100px]"
                         value={data.docs_subject}
                         onChange={handleChange}
+                        autoFocus
                       />
                       {(errors.docs_subject || localErrors.docs_subject) && (
                         <p className="text-red-500 text-xs">{errors.docs_subject || localErrors.docs_subject}</p>
@@ -384,18 +398,17 @@ export function AddDocsTrack({
               {step === 3 && (
                 <div className="flex flex-col items-center justify-center min-h-[250px]">
                   {/* Fixed container prevents jump */}
-                  <div className="w-20 h-20 flex items-center justify-center">
+                  <div className="w-15 h-15 flex items-center justify-center">
                     <AnimatePresence>
                       {processing ? (
                         <motion.div
                           key="spinner"
+                          initial={{ rotate: 0 }} // <-- make sure it starts at 0
                           animate={{ rotate: 360 }}
                           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                          className="w-full h-full flex items-center justify-center"
-                          style={{ originX: 0.5, originY: 0.5 }}
-                        >
-                          <CircleGauge className="w-full h-full text-blue-600" />
-                        </motion.div>
+                          className="w-16 h-16 rounded-full border-[4px] border-blue-600 border-t-transparent box-border"
+                          style={{ aspectRatio: "1 / 1" }} // <-- always force perfect circle
+                        />
                       ) : (
                         <motion.div
                           key="icon"
@@ -409,7 +422,6 @@ export function AddDocsTrack({
                       )}
                     </AnimatePresence>
                   </div>
-
                   <h2 className="text-lg font-bold mb-2 text-center">
                     Are you sure you want to route this document?
                   </h2>
@@ -435,6 +447,46 @@ export function AddDocsTrack({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Success Alert */}
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>✅ Success</AlertDialogTitle>
+            <AlertDialogDescription>
+              Document Routed Successfully!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction
+              onClick={() => {
+                setAlertOpen(false)
+                router.visit("/dtracks/create")
+              }}
+            >
+              Okay
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Error Alert */}
+      <AlertDialog open={errorAlertOpen} onOpenChange={setErrorAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-600">⚠️ Error</AlertDialogTitle>
+            <AlertDialogDescription>
+              Failed to route document. Please check required fields or make sure values are unique.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorAlertOpen(false)}>
+              Okay
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </Dialog>
   )
 }

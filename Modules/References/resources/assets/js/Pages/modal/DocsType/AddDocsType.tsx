@@ -93,6 +93,7 @@ export function AddDocsType({ open, onOpenChange, autoDocsCode }: { open: boolea
                 value={data.docs_name}
                 onChange={(e) => setData("docs_name", e.target.value)}
                 className="w-full min-h-[100px]"
+                autoFocus
               />
               {errors.docs_name && <span className="text-sm text-red-500">{errors.docs_name}</span>}
             </div>

@@ -127,5 +127,8 @@
             "modules/References/resources/assets/js/**/*.ts",
             "modules/References/resources/assets/js/**/*.d.ts",
             "modules/References/resources/assets/js/**/*.tsx",
+            "modules/IAM/resources/assets/js/**/*.ts",
+            "modules/IAM/resources/assets/js/**/*.d.ts",
+            "modules/IAM/resources/assets/js/**/*.tsx",
         ]
 }

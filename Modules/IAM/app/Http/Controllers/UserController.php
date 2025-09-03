@@ -53,42 +53,48 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Inertia
-     */
+
     public function create()
     {
-        return Inertia::render('User::User/Create');
+        return Inertia::render('IAM::User/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  UserFormRequest  $request
-     * @return Redirect
-     */
-    public function store(UserFormRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        $attributes = $request->safe()->except('password');
+        $request->validate([
+            'prefix'        => 'nullable|string|max:10',
+            'first_name'    => 'required|string|max:255',
+            'middle_name'   => 'nullable|string|max:255',
+            'last_name'     => 'required|string|max:255',
+            'name_extension' => 'nullable|string|max:10',
+            'sex'           => 'required|string|max:10',
+            'civil_status'  => 'required|string|max:50',
+            'birthdate'     => 'required|string|max:50',
+            'mobile_number' => 'required|string|max:20',
+            'username'      => 'required|string|max:255|unique:users,username',
+            'email'         => 'required|email|unique:users,email',
+            'password'      => 'required|string|min:8',
+        ]);
 
-        $user = User::create(array_merge($attributes, [
-            'password' => Hash::make($request->password),
-        ]));
+        User::create([
+            'prefix'        => $request->prefix,
+            'first_name'    => $request->first_name,
+            'middle_name'   => $request->middle_name,
+            'last_name'     => $request->last_name,
+            'name_extension' => $request->name_extension,
+            'sex'           => $request->sex,
+            'civil_status'  => $request->civil_status,
+            'birthdate'     => $request->birthdate,
+            'mobile_number' => $request->mobile_number,
+            'username'      => $request->username,
+            'email'         => $request->email,
+            'password'      => bcrypt($request->password),
+        ]);
 
-        if (isset($request->photo)) {
-            $user->updateProfilePhoto($request->photo);
-        }
-
-        /* if(isset($request->roles)) {
-            // $roles = Role::findMany($request->roles);
-            $roleIds = Arr::pluck($request->roles, 'id');
-            $user->assignRole($roleIds);
-        } */
-
-        return redirect(route('admin.users.index'))->with('success', 'User created.');
+        return redirect()->route('users.index')->with('success', 'User created successfully!');
     }
+
+
 
     /**
      * Show the form for editing the specified resource.

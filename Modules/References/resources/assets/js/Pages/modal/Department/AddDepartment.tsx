@@ -125,8 +125,9 @@ export function AddDocsTrack({
                 id="depart_name"
                 name="depart_name"
                 value={data.depart_name}
-                onChange={(e) => setData("depart_name", e.target.value)}
+                onChange={(e) => setData("depart_name", e.target.value.toUpperCase())}
                 className="w-full min-h-[100px]"
+                autoFocus
               />
               {errors.depart_name && <span className="text-sm text-red-500">{errors.depart_name}</span>}
             </div>
