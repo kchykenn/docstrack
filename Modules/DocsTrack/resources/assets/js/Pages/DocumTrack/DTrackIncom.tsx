@@ -3,10 +3,11 @@ import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import type { BreadcrumbItem } from '@/types';
 import { NavigationMenuDtrack } from '../components/NavigationMenuDtrack';
-import { DataTableDtrack } from '../components/DataTableDtrack';
+import { DataTableIncomDtrack } from '../components/DataTableIncomDtrack';
 
 const breadcrumbs: BreadcrumbItem[] = [
-  { title: 'Documentation Track', href: '/dtracks' },
+  { title: 'Hme', href: '/dtracks' },
+  { title: 'Incomming Docs', href: '/dtracks/incomming' },
 ];
 
 type Props = {
@@ -14,18 +15,18 @@ type Props = {
   depart_name: string
 }
 
-const DocumIndex: React.FC<Props> = ({ dtracks }) => {
+const DTrackIncom: React.FC<Props> = ({ dtracks }) => {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Documentation Track" />
       <div className="relative z-0">
         <NavigationMenuDtrack />
         <div className="p-4">
-          <DataTableDtrack data={dtracks} />
+          <DataTableIncomDtrack data={dtracks} />
         </div>
       </div>
     </AppLayout>
   );
 };
 
-export default DocumIndex;
+export default DTrackIncom;

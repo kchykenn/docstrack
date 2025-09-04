@@ -22,6 +22,14 @@ import {
 
 import AppLayout from "@/layouts/app-layout"
 
+type Department = {
+    depart_name: string
+}
+
+type Props = {
+    departments: Department[]
+}
+
 type UserFormData = {
     prefix: string
     username: string
@@ -35,6 +43,7 @@ type UserFormData = {
     civil_status: string
     birthdate: string
     mobile_number: string
+    depart_name: string
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -42,7 +51,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: "Create User", href: "/users/create" },
 ]
 
-export default function Create() {
+export default function Create({ departments }: Props) {
     const [step, setStep] = React.useState(1)
 
     const form = useReactHookForm<UserFormData>({
@@ -62,6 +71,7 @@ export default function Create() {
             civil_status: "",
             birthdate: "",
             mobile_number: "",
+            depart_name: "",
         },
     })
 
@@ -70,7 +80,7 @@ export default function Create() {
             onSuccess: () => {
                 alert("User created successfully!")
                 form.reset()
-                router.visit("/users")
+                router.visit("/iam/users")
             },
         })
     }
@@ -156,11 +166,11 @@ export default function Create() {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="Mr.">Mr.</SelectItem>
-                                                    <SelectItem value="Mrs.">Mrs.</SelectItem>
-                                                    <SelectItem value="Ms.">Ms.</SelectItem>
-                                                    <SelectItem value="Dr.">Dr.</SelectItem>
-                                                    <SelectItem value="Prof.">Prof.</SelectItem>
+                                                    <SelectItem value="Mr">Mr.</SelectItem>
+                                                    <SelectItem value="Mrs">Mrs.</SelectItem>
+                                                    <SelectItem value="Ms">Ms.</SelectItem>
+                                                    <SelectItem value="Dr">Dr.</SelectItem>
+                                                    <SelectItem value="Prof">Prof.</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -235,7 +245,7 @@ export default function Create() {
 
                                 <FormField
                                     control={form.control}
-                                    name="email"
+                                    name="username"
                                     rules={{ required: "Email is required" }}
                                     render={({ field }) => (
                                         <FormItem className="col-span-2">
@@ -371,14 +381,15 @@ export default function Create() {
                             <>
                                 <FormField
                                     control={form.control}
-                                    name="username"
+                                    name="email"
                                     rules={{ required: "Username is required" }}
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Username</FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="johndoe"
+                                                    type="email"
+                                                    placeholder="johndoe@doh.com"
                                                     {...field}
                                                     onChange={(e) => {
                                                         field.onChange(e)
@@ -413,6 +424,40 @@ export default function Create() {
                                         </FormItem>
                                     )}
                                 />
+
+                                {/* Department */}
+                                <FormField
+                                    control={form.control}
+                                    name="depart_name" // use ID, not name
+                                    rules={{ required: "Department is required" }}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Department</FormLabel>
+                                            <Select
+                                                onValueChange={(val) => {
+                                                    field.onChange(val)
+                                                    form.clearErrors("depart_name")
+                                                }}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select department" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {departments.map((dept, index) => (
+                                                        <SelectItem key={index} value={dept.depart_name}>
+                                                            {dept.depart_name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
                             </>
                         )}
 
@@ -448,14 +493,14 @@ export default function Create() {
                                                     "first_name",
                                                     "middle_name",
                                                     "last_name",
-                                                    "email",
+                                                    "username",
                                                     "sex",
                                                     "civil_status",
                                                     "birthdate",
                                                     "mobile_number",
                                                 ]
                                                 : step === 2
-                                                    ? ["username", "password"]
+                                                    ? ["email", "password", "depart_name"]
                                                     : []
 
                                         const isValid = await form.trigger(stepFields)

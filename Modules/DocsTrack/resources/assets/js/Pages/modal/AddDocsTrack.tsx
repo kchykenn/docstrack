@@ -452,19 +452,26 @@ export function AddDocsTrack({
       <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>✅ Success</AlertDialogTitle>
+            <AlertDialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              Success
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Document Routed Successfully!
+              Document Routed Successfully! Click okay to proceed to add another document.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction
-              onClick={() => {
-                setAlertOpen(false)
-                router.visit("/dtracks/create")
-              }}
-            >
-              Okay
+            <AlertDialogAction asChild>
+              <Button
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => {
+                  setAlertOpen(false)
+                  router.visit("/dtracks/create")
+                }}
+              >
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Okay
+              </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

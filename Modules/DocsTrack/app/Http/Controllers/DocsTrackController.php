@@ -6,15 +6,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Modules\DocsTrack\Models\DTrack;
 
 class DocsTrackController extends Controller
 {
 
     public function index()
     {
-        return Inertia::render('DocsTrack::DocumTrack/index');
-    }
+        $user = Auth::user();
+        $departName = $user->depart_name;
 
+        $dtracks = DB::table('tbl_dtrack')
+            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'docs_destin', 'ts_created_at')
+            ->get();
+
+        return Inertia::render('DocsTrack::DocumTrack/index', [
+            'dtracks' => $dtracks,
+            'depart_name' => $departName,
+        ]);
+    }
 
     public function create()
     {
@@ -83,25 +94,27 @@ class DocsTrackController extends Controller
             'remarks'       => 'nullable|string|max:500',
         ]);
 
-        $doc = DB::table('tbl_dtrack')->insertGetId([
-            'route_no'      => $validated['route_no'],
-            'docs_con_no'   => $validated['docs_con_no'],
-            'office_con_no' => $validated['office_con_no'],
-            'docs_subject'  => $validated['docs_subject'],
-            'docs_type'     => $validated['docs_type'],
-            'seq_no'        => $validated['seq_no'],
-            'docs_destin'   => $validated['docs_destin'],
-            'remarks'       => $validated['remarks'] ?? null,
-        ]);
+        $doc = DTrack::create($validated);
 
         return redirect()->back()
             ->with('success', 'Document routed successfully!')
-            ->with('doc', $doc);
+            ->with('doc', $doc->id);
     }
 
-    public function test()
+    public function incomm()
     {
-        return Inertia::render('DocsTrack::modal/AddDocsTrack');
+        $user = Auth::user();
+        $departName = $user->depart_name;
+
+        $dtracks = DB::table('tbl_dtrack')
+            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'docs_destin', 'ts_created_at')
+            ->where('docs_destin', $departName)
+            ->get();
+
+        return Inertia::render('DocsTrack::DocumTrack/DTrackIncom', [
+            'dtracks' => $dtracks,
+            'depart_name' => $departName,
+        ]);
     }
 
 

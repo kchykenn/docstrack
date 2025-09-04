@@ -82,7 +82,7 @@ export default function User() {
             accessorKey: 'username',
             header: ({ column }) => (
                 <TableSortHeader
-                    title="Username"
+                    title="Email"
                     onClick={() => {
                         setTimeDebounce(50);
                         sort('username');
@@ -96,7 +96,7 @@ export default function User() {
             accessorKey: 'email',
             header: ({ column }) => (
                 <TableSortHeader
-                    title="Email"
+                    title="Username"
                     onClick={() => {
                         setTimeDebounce(50);
                         sort('email');

@@ -106,7 +106,7 @@ export const columns: ColumnDef<any>[] = [
     },
 ]
 
-export function DataTableDtrack({ data }: { data: any[] }) {
+export function DataTableIncomDtrack({ data }: { data: any[] }) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})

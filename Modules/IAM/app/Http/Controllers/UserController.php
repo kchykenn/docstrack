@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Modules\Core\Http\Controllers\CoreController as Controller;
 use Modules\IAM\Models\Role;
@@ -56,8 +57,17 @@ class UserController extends Controller
 
     public function create()
     {
-        return Inertia::render('IAM::User/Create');
+        $departments = DB::table('tbl_department')
+            ->select('id', 'depart_name')
+            ->where('depart_stat', 1)
+            ->orderBy('depart_name', 'asc')
+            ->get();
+
+        return Inertia::render('IAM::User/Create', [
+            'departments' => $departments,
+        ]);
     }
+
 
     public function store(Request $request)
     {
@@ -71,12 +81,13 @@ class UserController extends Controller
             'civil_status'  => 'required|string|max:50',
             'birthdate'     => 'required|string|max:50',
             'mobile_number' => 'required|string|max:20',
-            'username'      => 'required|string|max:255|unique:users,username',
+            'username'      => 'required|email|unique:users,username',
             'email'         => 'required|email|unique:users,email',
             'password'      => 'required|string|min:8',
+            'depart_name'   => 'required|string|max:50',
         ]);
 
-        User::create([
+        $user = User::create([
             'prefix'        => $request->prefix,
             'first_name'    => $request->first_name,
             'middle_name'   => $request->middle_name,
@@ -89,11 +100,12 @@ class UserController extends Controller
             'username'      => $request->username,
             'email'         => $request->email,
             'password'      => bcrypt($request->password),
+            'depart_name'   => $request->depart_name,
         ]);
-
-        return redirect()->route('users.index')->with('success', 'User created successfully!');
+        return redirect()->back()
+            ->with('success', 'User created successfully!')
+            ->with('user', $user);
     }
-
 
 
     /**
