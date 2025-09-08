@@ -9,8 +9,20 @@ const breadcrumbs: BreadcrumbItem[] = [
   { title: 'Documentation Track', href: '/dtracks' },
 ];
 
+export type data = {
+    id: number
+    route_no: string
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    depart_from: string
+    docs_destin: string
+    ts_created_at: string | null
+}
+
 type Props = {
-  dtracks: any[]
+  dtracks: data[]
   depart_name: string
 }
 
@@ -18,7 +30,7 @@ const DocumIndex: React.FC<Props> = ({ dtracks }) => {
   return (
     <AppLayout breadcrumbs={breadcrumbs}>
       <Head title="Documentation Track" />
-      <div className="relative z-0">
+      <div className="relative z-0 p-1">
         <NavigationMenuDtrack />
         <div className="p-4">
           <DataTableDtrack data={dtracks} />

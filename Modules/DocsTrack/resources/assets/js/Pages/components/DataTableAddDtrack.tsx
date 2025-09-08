@@ -21,6 +21,7 @@ import {
   Printer,
   Pencil,
   Trash2,
+  Inbox,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { router } from "@inertiajs/react";
 import {
   Table,
   TableBody,
@@ -43,70 +45,89 @@ import {
 
 import { AddDocsTrack } from "../modal/AddDocsTrack";
 import { PrintDocsTrack } from "../modal/PrintDocsTrack";
+import { AddDtrack, PageProps } from '@/types';
 
-export type DTrack = {
-  id: number;
-  route_no: string;
-  docs_con_no: string;
-  office_con_no: string;
-  docs_subject: string;
-  docs_type: string;
-  remarks: string;
-  seq_no: string;
-  docs_destin: string;
-};
+interface Props extends PageProps {
+  docstype: { id: number; docs_code: string; docs_name: string; docs_stat: string }[];
+  autoRouteNo: string;
+  autoDocsConNo: string;
+  autoOfficeConNo: string;
+  dtracks: AddDtrack[];
+  departments: { id: number; depart_name: string }[];
+  departName: string;
+  departUser: string;
+}
 
-// 👉 Columns with Print/Edit/Delete
 export const getColumns = (
-  onPrint: (doc: DTrack) => void,
-  onEdit: (doc: DTrack) => void,
-  onDelete: (doc: DTrack) => void
-): ColumnDef<DTrack>[] => [
-  { accessorKey: "route_no", header: "Route No" },
-  { accessorKey: "docs_con_no", header: "Docs Con No" },
-  { accessorKey: "office_con_no", header: "Office Con No" },
-  { accessorKey: "docs_subject", header: "Subject" },
-  { accessorKey: "docs_type", header: "Type" },
-  { accessorKey: "docs_destin", header: "Destination" },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="center">
-          <DropdownMenuItem
-            onClick={() => onPrint(row.original)}
-            className="focus:bg-blue-100"
-          >
-            <Printer className="mr-2 h-4 w-4 text-blue-600" />
-            <span>Print Form</span>
-          </DropdownMenuItem>
+  onPrint: (doc: AddDtrack) => void,
+  onEdit: (doc: AddDtrack) => void,
+  onDelete: (doc: AddDtrack) => void
+): ColumnDef<AddDtrack>[] => [
+    { accessorKey: "route_no", header: "Route No" },
+    // { accessorKey: "docs_con_no", header: "Docs Con No" },
+    // { accessorKey: "office_con_no", header: "Office Con No" },
+    { accessorKey: "docs_subject", header: "Subject" },
+    { accessorKey: "docs_type", header: "Type" },
+    { accessorKey: "depart_from", header: "From" },
+    { accessorKey: "docs_destin", header: "To" },
+    {
+      accessorKey: "ts_created_at",
+      header: "Date Created/Routed",
+      cell: ({ getValue }) => {
+        const raw = getValue() as string | null
+        if (!raw) return "—"
 
-          <DropdownMenuItem
-            onClick={() => onEdit(row.original)}
-            className="focus:bg-green-100"
-          >
-            <Pencil className="mr-2 h-4 w-4 text-green-600" />
-            <span>Edit</span>
-          </DropdownMenuItem>
+        const date = new Date(raw)
 
-          <DropdownMenuItem
-            onClick={() => onDelete(row.original)}
-            className="focus:bg-red-100"
-          >
-            <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-            <span>Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
-  },
-];
+        return date.toLocaleString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="center">
+            <DropdownMenuItem
+              onClick={() => onPrint(row.original)}
+              className="focus:bg-blue-100"
+            >
+              <Printer className="mr-2 h-4 w-4 text-blue-600" />
+              <span>Print Form</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => onEdit(row.original)}
+              className="focus:bg-green-100"
+            >
+              <Pencil className="mr-2 h-4 w-4 text-green-600" />
+              <span>Edit</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              onClick={() => onDelete(row.original)}
+              className="focus:bg-red-100"
+            >
+              <Trash2 className="mr-2 h-4 w-4 text-red-600" />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
 export function DataTableAddDtrack({
   docstype,
@@ -115,30 +136,25 @@ export function DataTableAddDtrack({
   autoOfficeConNo,
   dtracks,
   departments,
-}: {
-  docstype: { id: number; docs_code: string; docs_name: string; docs_stat: string }[];
-  autoRouteNo: string;
-  autoDocsConNo: string;
-  autoOfficeConNo: string;
-  dtracks: DTrack[];
-  departments: { id: number; depart_name: string }[];
-}) {
+  departName,
+  departUser,
+}: Props) {
   const [open, setOpen] = React.useState(false);
 
   // 👉 Print modal state
   const [printOpen, setPrintOpen] = React.useState(false);
-  const [selectedDoc, setSelectedDoc] = React.useState<DTrack | null>(null);
+  const [selectedDoc, setSelectedDoc] = React.useState<AddDtrack | null>(null);
 
-  const handlePrint = (doc: DTrack) => {
+  const handlePrint = (doc: AddDtrack) => {
     setSelectedDoc(doc);
     setPrintOpen(true);
   };
 
-  const handleEdit = (doc: DTrack) => {
+  const handleEdit = (doc: AddDtrack) => {
     console.log("Edit:", doc);
   };
 
-  const handleDelete = (doc: DTrack) => {
+  const handleDelete = (doc: AddDtrack) => {
     console.log("Delete:", doc);
   };
 
@@ -172,7 +188,7 @@ export function DataTableAddDtrack({
     <div className="w-full">
       <span className="text-ml font-medium mb-2 flex items-center gap-2 text-left">
         <FileText className="w-5 h-5 text-primary" />
-        List of Added Documents
+        List of Routed Documents
       </span>
 
       <AddDocsTrack
@@ -183,6 +199,8 @@ export function DataTableAddDtrack({
         autoDocsConNo={autoDocsConNo}
         autoOfficeConNo={autoOfficeConNo}
         departments={departments}
+        departName={departName}
+        departUser={departUser}
       />
 
       <div className="flex items-center py-4 gap-2">
@@ -190,7 +208,10 @@ export function DataTableAddDtrack({
           <FilePlus className="w-4 h-4 mr-2" />
           Add New
         </Button>
-
+        <Button onClick={() => router.visit("/dtracks/incoming")}>
+          <Inbox className="w-4 h-4 mr-2" />
+          Incoming Docs
+        </Button>
         <Input
           placeholder="Search here..."
           value={(table.getState().globalFilter as string) ?? ""}
@@ -236,9 +257,9 @@ export function DataTableAddDtrack({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   );
                 })}

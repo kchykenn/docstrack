@@ -54,6 +54,8 @@ export function AddDocsTrack({
   autoDocsConNo,
   autoOfficeConNo,
   departments,
+  departName,
+  departUser,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -61,7 +63,9 @@ export function AddDocsTrack({
   autoRouteNo: string
   autoDocsConNo: string
   autoOfficeConNo: string
-  departments: { id: number; depart_name: string }[]
+  departments: { id: number; depart_name: string }[],
+  departName: string
+  departUser: string
 }) {
   const [step, setStep] = React.useState(1)
 
@@ -74,6 +78,8 @@ export function AddDocsTrack({
     seq_no: "yes",
     docs_destin: "",
     remarks: "",
+    depart_from: departName || "",
+    depart_user: departUser || "",
   })
 
   const [alertOpen, setAlertOpen] = React.useState(false)
@@ -363,6 +369,41 @@ export function AddDocsTrack({
                         <p className="text-red-500 text-xs">
                           {errors.docs_destin || localErrors.docs_destin}
                         </p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="depart_from">
+                        Department User From.<strong className="text-red-500">*</strong>
+                      </Label>
+                      <Input
+                        id="depart_from"
+                        name="depart_from"
+                        value={data.depart_from}
+                        readOnly
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                      {(errors.depart_from || localErrors.depart_from) && (
+                        <p className="text-red-500 text-xs">{errors.depart_from || localErrors.depart_from}</p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="depart_user">
+                        Department User<strong className="text-red-500">*</strong>
+                      </Label>
+                      <Input
+                        id="depart_user"
+                        name="depart_user"
+                        value={data.depart_user
+                          .split(' ')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' ')}
+                        readOnly
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                      {(errors.depart_user || localErrors.depart_user) && (
+                        <p className="text-red-500 text-xs">{errors.depart_user || localErrors.depart_user}</p>
                       )}
                     </div>
 

@@ -6,6 +6,10 @@ import { DataTableAddDtrack } from '../components/DataTableAddDtrack';
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
+    title: 'Home',
+    href: '/dtracks',
+  },
+  {
     title: 'Add Documentation Track',
     href: '/dtracks/create',
   },
@@ -18,17 +22,25 @@ const AddDtrack: React.FC = () => {
     autoDocsConNo: string,
     autoOfficeConNo: string,
     dtracks: {
-      id: number,
-      route_no: string,
-      docs_con_no: string,
-      office_con_no: string,
-      docs_subject: string,
-      docs_type: string,
-      seq_no: string,
-      docs_destin: string
-      remarks: string
+      id: number;
+      route_no: string;
+      docs_con_no: string;
+      office_con_no: string;
+      docs_subject: string;
+      docs_type: string;
+      remarks: string;
+      seq_no: string;
+      depart_from: string;
+      ts_created_at: string | null;
+      docs_destin: string;
+      date: string | null;
+      from_office: string | null;
+      to_office: string | null;
+      due_date: string | null;
     }[],
-    departments: { id: number, depart_name: string }[]
+    departments: { id: number, depart_name: string }[],
+    departName: string;
+    departUser: string;
   }>()
 
   return (
@@ -40,8 +52,10 @@ const AddDtrack: React.FC = () => {
           autoRouteNo={props.autoRouteNo}
           autoDocsConNo={props.autoDocsConNo}
           autoOfficeConNo={props.autoOfficeConNo}
-          dtracks={props.dtracks} 
+          dtracks={props.dtracks}
           departments={props.departments}
+          departName={props.departName}
+          departUser={props.departUser}
         />
       </div>
     </AppLayout>

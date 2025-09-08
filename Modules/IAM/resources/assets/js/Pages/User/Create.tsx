@@ -486,7 +486,7 @@ export default function Create({ departments }: Props) {
                                 <Button
                                     type="button"
                                     onClick={async () => {
-                                        const stepFields =
+                                        const stepFields: (keyof UserFormData)[] =
                                             step === 1
                                                 ? [
                                                     "prefix",
@@ -501,12 +501,12 @@ export default function Create({ departments }: Props) {
                                                 ]
                                                 : step === 2
                                                     ? ["email", "password", "depart_name"]
-                                                    : []
+                                                    : [];
 
-                                        const isValid = await form.trigger(stepFields)
+                                        const isValid = await form.trigger(stepFields);
 
                                         if (isValid) {
-                                            setStep(step + 1)
+                                            setStep(step + 1);
                                         }
                                     }}
                                 >
@@ -515,12 +515,13 @@ export default function Create({ departments }: Props) {
                             ) : (
                                 <Button
                                     type="button"
-                                    onClick={form.handleSubmit(handleSubmit)} // submit only when clicked
+                                    onClick={form.handleSubmit(handleSubmit)}
                                 >
                                     Save
                                 </Button>
                             )}
                         </div>
+
                     </form>
                 </Form>
             </div>

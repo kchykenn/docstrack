@@ -34,14 +34,22 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { FileArchiveIcon } from "lucide-react";
 
-export const columns: ColumnDef<any>[] = [
+import { Dtrack, PageProps } from '@/types';
+
+interface Props extends PageProps {
+    data: Dtrack[];
+}
+
+export const columns: ColumnDef<Dtrack>[] = [
     { accessorKey: "route_no", header: "Route No" },
-    { accessorKey: "docs_con_no", header: "Docs Control No" },
-    { accessorKey: "office_con_no", header: "Office Control No" },
+    // { accessorKey: "docs_con_no", header: "Docs Control No" },
+    // { accessorKey: "office_con_no", header: "Office Control No" },
     { accessorKey: "docs_subject", header: "Subject" },
     { accessorKey: "docs_type", header: "Type" },
-    { accessorKey: "docs_destin", header: "Destination" },
+    { accessorKey: "depart_from", header: "From" },
+    { accessorKey: "docs_destin", header: "To" },
     {
         accessorKey: "ts_created_at",
         header: "Date Created/Routed",
@@ -52,12 +60,12 @@ export const columns: ColumnDef<any>[] = [
             const date = new Date(raw)
 
             return date.toLocaleString("en-US", {
-                month: "long",   
-                day: "numeric",  
-                year: "numeric", 
+                month: "long",
+                day: "numeric",
+                year: "numeric",
                 hour: "numeric",
                 minute: "2-digit",
-                hour12: true,   
+                hour12: true,
             })
         },
     },
@@ -90,14 +98,14 @@ export const columns: ColumnDef<any>[] = [
                                 View Details
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => console.log("Edit", dtrack.route_no)}>
-                                Edit
+                                Print
                             </DropdownMenuItem>
-                            <DropdownMenuItem
+                            {/* <DropdownMenuItem
                                 className="text-red-600"
                                 onClick={() => console.log("Delete", dtrack.route_no)}
                             >
                                 Delete
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -106,7 +114,7 @@ export const columns: ColumnDef<any>[] = [
     },
 ]
 
-export function DataTableDtrack({ data }: { data: any[] }) {
+export function DataTableDtrack({ data }: Props) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -142,6 +150,10 @@ export function DataTableDtrack({ data }: { data: any[] }) {
 
     return (
         <div className="w-full">
+            <span className="text-lg font-medium mb-2 flex items-center gap-2 text-left">
+                <FileArchiveIcon className="w-8 h-8 text-primary" />
+                Master List Page
+            </span>
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Search all..."

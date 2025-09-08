@@ -13,7 +13,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown, HomeIcon, Inbox, MoreHorizontal, Send } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -34,13 +34,21 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import { router } from "@inertiajs/react";
+import { IncomDTrack, PageProps } from '@/types';
 
-export const columns: ColumnDef<any>[] = [
+interface Props extends PageProps {
+    data: IncomDTrack[];
+}
+
+
+export const columns: ColumnDef<IncomDTrack>[] = [
     { accessorKey: "route_no", header: "Route No" },
-    { accessorKey: "docs_con_no", header: "Docs Control No" },
-    { accessorKey: "office_con_no", header: "Office Control No" },
+    // { accessorKey: "docs_con_no", header: "Docs Control No" },
+    // { accessorKey: "office_con_no", header: "Office Control No" },
     { accessorKey: "docs_subject", header: "Subject" },
     { accessorKey: "docs_type", header: "Type" },
+    { accessorKey: "depart_from", header: "From" },
     { accessorKey: "docs_destin", header: "Destination" },
     {
         accessorKey: "ts_created_at",
@@ -52,12 +60,12 @@ export const columns: ColumnDef<any>[] = [
             const date = new Date(raw)
 
             return date.toLocaleString("en-US", {
-                month: "long",   
-                day: "numeric",  
-                year: "numeric", 
+                month: "long",
+                day: "numeric",
+                year: "numeric",
                 hour: "numeric",
                 minute: "2-digit",
-                hour12: true,   
+                hour12: true,
             })
         },
     },
@@ -90,7 +98,7 @@ export const columns: ColumnDef<any>[] = [
                                 View Details
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => console.log("Edit", dtrack.route_no)}>
-                                Edit
+                                Received
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 className="text-red-600"
@@ -106,7 +114,7 @@ export const columns: ColumnDef<any>[] = [
     },
 ]
 
-export function DataTableIncomDtrack({ data }: { data: any[] }) {
+export function DataTableIncomDtrack({ data }: Props) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -132,7 +140,6 @@ export function DataTableIncomDtrack({ data }: { data: any[] }) {
             globalFilter,
         },
         globalFilterFn: (row, columnId, filterValue) => {
-            // check all visible columns
             return Object.values(row.original)
                 .join(" ")
                 .toLowerCase()
@@ -142,7 +149,19 @@ export function DataTableIncomDtrack({ data }: { data: any[] }) {
 
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <span className="text-lg font-medium mb-2 flex items-center gap-2 text-left">
+                <Inbox className="w-8 h-8 text-primary" />
+                Incoming Documents
+            </span>
+            <div className="flex items-center py-4 gap-2">
+                <Button onClick={() => router.visit("/dtracks")}>
+                    <HomeIcon className="w-4 h-4 mr-2" />
+                    Back to Master Page
+                </Button>
+                <Button onClick={() => router.visit("/dtracks/create")}>
+                    <Send className="w-4 h-4 mr-2" />
+                    Route New Documents
+                </Button>
                 <Input
                     placeholder="Search all..."
                     value={globalFilter ?? ""}

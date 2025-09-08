@@ -18,7 +18,8 @@ class DocsTrackController extends Controller
         $departName = $user->depart_name;
 
         $dtracks = DB::table('tbl_dtrack')
-            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'docs_destin', 'ts_created_at')
+            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'depart_from', 'docs_destin', 'ts_created_at')
+            ->orderBy('route_no', 'desc')
             ->get();
 
         return Inertia::render('DocsTrack::DocumTrack/index', [
@@ -29,6 +30,11 @@ class DocsTrackController extends Controller
 
     public function create()
     {
+
+        $user = Auth::user();
+        $departName = $user->depart_name;
+        $departUser = $user->first_name . ' ' . $user->middle_name . ' ' . $user->last_name;
+
         $latestDTrack = DB::table('tbl_dtrack')->orderBy('id', 'desc')->first();
 
         $lastRouteNo = 0;
@@ -61,15 +67,18 @@ class DocsTrackController extends Controller
             ->get();
 
         $dtracks = DB::table('tbl_dtrack')
-            ->select('id', 'route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'seq_no', 'docs_destin')
+            ->select('id', 'route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'seq_no', 'docs_destin', 'ts_created_at', 'depart_from')
+            ->where('depart_from', $departName)
             ->orderBy('id', 'desc')
             ->get();
+
 
         $departments = DB::table('tbl_department')
             ->select('id', 'depart_name')
             ->where('depart_stat', 1)
             ->orderBy('depart_name', 'asc')
             ->get();
+
 
         return Inertia::render('DocsTrack::DocumTrack/AddDtrack', [
             'docstype' => $docstype,
@@ -78,11 +87,14 @@ class DocsTrackController extends Controller
             'autoOfficeConNo' => $autoOfficeConNo,
             'dtracks' => $dtracks,
             'departments' => $departments,
+            'departName' => $departName,
+            'departUser' => $departUser,
         ]);
     }
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'route_no'      => 'required|string|max:255|unique:tbl_dtrack,route_no',
             'docs_con_no'   => 'required|string|max:255|unique:tbl_dtrack,docs_con_no',
@@ -90,6 +102,8 @@ class DocsTrackController extends Controller
             'docs_subject'  => 'required|string|max:255',
             'docs_type'     => 'required|string',
             'seq_no'        => 'nullable|string|max:10',
+            'depart_from'   => 'required|string|max:50',
+            'depart_user'   => 'required|string|max:50',
             'docs_destin'   => 'required|string|max:255',
             'remarks'       => 'nullable|string|max:500',
         ]);
@@ -101,13 +115,14 @@ class DocsTrackController extends Controller
             ->with('doc', $doc->id);
     }
 
+
     public function incomm()
     {
         $user = Auth::user();
         $departName = $user->depart_name;
 
         $dtracks = DB::table('tbl_dtrack')
-            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'docs_destin', 'ts_created_at')
+            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'depart_from', 'docs_destin', 'ts_created_at')
             ->where('docs_destin', $departName)
             ->get();
 

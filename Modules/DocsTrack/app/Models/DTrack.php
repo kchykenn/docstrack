@@ -19,6 +19,8 @@ class DTrack extends Model
         'docs_subject',
         'docs_type',
         'seq_no',
+        'depart_from',
+        'depart_user',
         'docs_destin',
         'ts_created_at',
         'ts_updated_at',
