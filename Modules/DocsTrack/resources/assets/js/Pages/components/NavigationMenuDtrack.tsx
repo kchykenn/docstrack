@@ -50,7 +50,7 @@ export function NavigationMenuDtrack() {
                 href="/dtracks/create"
                 title={
                   <span className="flex items-center gap-2">
-                    <FilePlus className="w-8 h-8 text-primary" />
+                    <FilePlus className="w-4 h-4 text-primary" />
                     New Documents
                   </span>
                 }
@@ -63,11 +63,11 @@ export function NavigationMenuDtrack() {
                 title={
                   <span className="flex items-center gap-2">
                     <Inbox className="w-4 h-4 text-primary" />
-                    Incomming Documents
+                    Incoming Documents
                   </span>
                 }
               >
-                Show the list of all incomming documents.
+                Show the list of all incoming documents.
               </ListItem>
 
               <ListItem
@@ -81,6 +81,19 @@ export function NavigationMenuDtrack() {
               >
                 Show the list of all outgoing documents.
               </ListItem>
+
+              <ListItem
+                href="/dtracks/received"
+                title={
+                  <span className="flex items-center gap-2">
+                    <Inbox className="w-4 h-4 text-primary" />
+                    Receive Documents
+                  </span>
+                }
+              >
+                Show the list of all received documents.
+              </ListItem>
+
 
             </ul>
           </NavigationMenuContent>

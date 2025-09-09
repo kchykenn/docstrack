@@ -1,28 +1,21 @@
 <?php
 
-namespace Modules\DocsTrack\Models;
+namespace Modules\References\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\Carbon;
 
-class DTrack extends Model
+class ActionType extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'tbl_dtrack';
+    protected $table = 'tbl_accttype';
 
     protected $fillable = [
-        'route_no',
-        'docs_con_no',
-        'office_con_no',
-        'docs_subject',
-        'docs_type',
-        'seq_no',
-        'depart_from',
-        'act_taken',
-        'depart_user',
-        'docs_destin',
+        'act_code',
+        'act_name',
+        'act_stat',
         'ts_created_at',
         'ts_updated_at',
     ];

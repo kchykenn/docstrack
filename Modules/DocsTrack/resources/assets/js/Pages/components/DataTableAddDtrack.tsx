@@ -54,6 +54,7 @@ interface Props extends PageProps {
   autoOfficeConNo: string;
   dtracks: AddDtrack[];
   departments: { id: number; depart_name: string }[];
+  acttype: { id: number; act_name: string }[];
   departName: string;
   departUser: string;
 }
@@ -136,6 +137,7 @@ export function DataTableAddDtrack({
   autoOfficeConNo,
   dtracks,
   departments,
+  acttype,
   departName,
   departUser,
 }: Props) {
@@ -199,6 +201,7 @@ export function DataTableAddDtrack({
         autoDocsConNo={autoDocsConNo}
         autoOfficeConNo={autoOfficeConNo}
         departments={departments}
+        acttype={acttype}
         departName={departName}
         departUser={departUser}
       />

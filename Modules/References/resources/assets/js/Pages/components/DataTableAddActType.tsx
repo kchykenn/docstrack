@@ -13,9 +13,10 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ChevronDown, HomeIcon, Inbox, MoreHorizontal, Send, Copy, Eye, CheckCircle, Trash2 } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, FilePlus, FileText, ClipboardCopy } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -34,38 +35,84 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { router } from "@inertiajs/react";
-import { IncomDTrack, PageProps } from '@/types';
 
-interface Props extends PageProps {
-    data: IncomDTrack[];
+import { AddActType } from "../modal/ActType/AddActType"
+
+export type ActType = {
+    id: string
+    act_code: string;
+    act_name: string
+    act_stat: string;
 }
 
-export const columns: ColumnDef<IncomDTrack>[] = [
-    { accessorKey: "route_no", header: "Route No" },
-    // { accessorKey: "docs_con_no", header: "Docs Control No" },
-    // { accessorKey: "office_con_no", header: "Office Control No" },
-    { accessorKey: "docs_subject", header: "Subject" },
-    { accessorKey: "docs_type", header: "Type" },
-    { accessorKey: "depart_from", header: "From" },
-    { accessorKey: "docs_destin", header: "Destination" },
+export const columns: ColumnDef<ActType>[] = [
     {
-        accessorKey: "ts_created_at",
-        header: "Date Created/Routed",
-        cell: ({ getValue }) => {
-            const raw = getValue() as string | null
-            if (!raw) return "—"
-
-            const date = new Date(raw)
-
-            return date.toLocaleString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-            })
+        id: "select",
+        header: ({ table }) => (
+            <div className="bg-black text-white px-2 py-1">
+                <Checkbox
+                    checked={
+                        table.getIsAllPageRowsSelected() ||
+                        (table.getIsSomePageRowsSelected() && "indeterminate")
+                    }
+                    onCheckedChange={(value) =>
+                        table.toggleAllPageRowsSelected(!!value)
+                    }
+                    aria-label="Select all"
+                />
+            </div>
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        accessorKey: "act_code",
+        header: () => (
+            <div className="bg-black text-white px-2 py-1">Action Code</div>
+        ),
+        cell: ({ row }) => (
+            <div>{row.getValue("act_code")}</div>
+        ),
+    },
+    {
+        accessorKey: "act_name",
+        header: ({ column }) => (
+            <div className="bg-black text-white px-2 py-1">
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                    className="text-white hover:text-gray-200"
+                >
+                    Action Type
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            </div>
+        ),
+        cell: ({ row }) => (
+            <div>{row.getValue("act_name")}</div>
+        ),
+    },
+    {
+        accessorKey: "act_stat",
+        header: () => (
+            <div className="bg-black text-white px-2 py-1">Status</div>
+        ),
+        cell: ({ row }) => {
+            const isActive = row.getValue("act_stat") == "1";
+            return (
+                <span className={isActive ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>
+                    {isActive ? "Active" : "Inactive"}
+                </span>
+            );
         },
     },
     {
@@ -75,7 +122,7 @@ export const columns: ColumnDef<IncomDTrack>[] = [
             <div className="bg-black text-white text-center px-2 py-1">Actions</div>
         ),
         cell: ({ row }) => {
-            const dtrack = row.original
+            const acttype = row.original;
             return (
                 <div className="w-full flex justify-center">
                     <DropdownMenu>
@@ -87,52 +134,36 @@ export const columns: ColumnDef<IncomDTrack>[] = [
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="center">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(dtrack.route_no)}
-                            >
-                                <Copy className="mr-2 h-4 w-4" />
-                                Copy Route No
+                            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(acttype.id)}>
+                                <ClipboardCopy className="w-4 h-4 mr-2" />
+                                Copy Action Type
                             </DropdownMenuItem>
-
                             <DropdownMenuSeparator />
-
-                            <DropdownMenuItem onClick={() => console.log("View", dtrack.route_no)}>
-                                <Eye className="mr-2 h-4 w-4" />
-                                View Details
+                            <DropdownMenuItem>
+                                <FileText className="w-4 h-4 mr-2" />
+                                View Action Type
                             </DropdownMenuItem>
-
-                            <DropdownMenuItem
-                            className="text-green-600"
-                            onClick={() => console.log("Receive", dtrack.route_no)}>
-                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
-                                Received
-                            </DropdownMenuItem>
-
-                            <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => console.log("Delete", dtrack.route_no)}
-                            >
-                                <Trash2 className="mr-2 h-4 w-4 text-red-600" />
-                                Delete
+                            <DropdownMenuItem>
+                                <FilePlus className="w-4 h-4 mr-2" />
+                                Edit Action Type
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-            )
+            );
         },
     },
-]
+];
 
-export function DataTableIncomDtrack({ data }: Props) {
+export function DataTableAddActType({ autoActCode, acttype, }: { autoActCode: string, acttype: ActType[] }) {
+    const [open, setOpen] = React.useState(false);
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
-    const [globalFilter, setGlobalFilter] = React.useState("")
 
     const table = useReactTable({
-        data,
+        data: acttype,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -147,35 +178,31 @@ export function DataTableIncomDtrack({ data }: Props) {
             columnFilters,
             columnVisibility,
             rowSelection,
-            globalFilter,
-        },
-        globalFilterFn: (row, columnId, filterValue) => {
-            return Object.values(row.original)
-                .join(" ")
-                .toLowerCase()
-                .includes(filterValue.toLowerCase())
         },
     })
 
     return (
         <div className="w-full">
-            <span className="text-lg font-medium mb-2 flex items-center gap-2 text-left">
-                <Inbox className="w-8 h-8 text-primary" />
-                Incoming Documents
+            <span className="text-ml font-medium mb-2 flex items-center gap-2 text-left">
+                <FileText className="w-5 h-5 text-primary" />
+                List of Action Type
             </span>
+
+            <AddActType open={open} onOpenChange={setOpen} autoActCode={autoActCode} />
+
             <div className="flex items-center py-4 gap-2">
-                <Button onClick={() => router.visit("/dtracks")}>
-                    <HomeIcon className="w-4 h-4 mr-2" />
-                    Back to Master Page
-                </Button>
-                <Button onClick={() => router.visit("/dtracks/create")}>
-                    <Send className="w-4 h-4 mr-2" />
-                    Route New Documents
+                <Button
+                    onClick={() => setOpen(true)}
+                >
+                    <FilePlus className="w-4 h-4 mr-2" />
+                    Add New
                 </Button>
                 <Input
-                    placeholder="Search all..."
-                    value={globalFilter ?? ""}
-                    onChange={(event) => setGlobalFilter(event.target.value)}
+                    placeholder="Filter document name..."
+                    value={(table.getColumn("act_name")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("act_name")?.setFilterValue(event.target.value)
+                    }
                     className="max-w-sm"
                 />
                 <DropdownMenu>
@@ -188,20 +215,18 @@ export function DataTableIncomDtrack({ data }: Props) {
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
+                            .map((column) => (
+                                <DropdownMenuCheckboxItem
+                                    key={column.id}
+                                    className="capitalize"
+                                    checked={column.getIsVisible()}
+                                    onCheckedChange={(value) =>
+                                        column.toggleVisibility(!!value)
+                                    }
+                                >
+                                    {column.id}
+                                </DropdownMenuCheckboxItem>
+                            ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -212,7 +237,7 @@ export function DataTableIncomDtrack({ data }: Props) {
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="bg-black text-xs text-white">
+                                        <TableHead key={header.id} className="bg-black text-white">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -220,7 +245,7 @@ export function DataTableIncomDtrack({ data }: Props) {
                                                     header.getContext()
                                                 )}
                                         </TableHead>
-                                    )
+                                    );
                                 })}
                             </TableRow>
                         ))}
@@ -232,18 +257,23 @@ export function DataTableIncomDtrack({ data }: Props) {
                                 <TableRow
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
-                                    className="text-xs"
                                 >
                                     {row.getVisibleCells().map((cell) => (
                                         <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
                                         </TableCell>
                                     ))}
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell
+                                    colSpan={columns.length}
+                                    className="h-24 text-center"
+                                >
                                     No results.
                                 </TableCell>
                             </TableRow>

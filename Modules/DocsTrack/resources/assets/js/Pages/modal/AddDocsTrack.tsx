@@ -54,6 +54,7 @@ export function AddDocsTrack({
   autoDocsConNo,
   autoOfficeConNo,
   departments,
+  acttype,
   departName,
   departUser,
 }: {
@@ -64,6 +65,7 @@ export function AddDocsTrack({
   autoDocsConNo: string
   autoOfficeConNo: string
   departments: { id: number; depart_name: string }[],
+  acttype: { id: number; act_name: string }[],
   departName: string
   departUser: string
 }) {
@@ -77,6 +79,7 @@ export function AddDocsTrack({
     docs_type: "",
     seq_no: "yes",
     docs_destin: "",
+    act_taken: "",
     remarks: "",
     depart_from: departName || "",
     depart_user: departUser || "",
@@ -122,6 +125,7 @@ export function AddDocsTrack({
 
     const newErrors: { [key: string]: string } = {}
     if (!data.docs_destin) newErrors.docs_destin = "Destination Office is required"
+    if (!data.act_taken) newErrors.act_taken = "Action Taken is required"
 
     setLocalErrors(newErrors)
 
@@ -343,33 +347,63 @@ export function AddDocsTrack({
                 <form onSubmit={handleNextConfirm}>
                   <div className="grid gap-4 mt-6">
                     {/* Destination Office */}
-                    <div className="flex flex-col gap-2">
-                      <Label htmlFor="docs_destin">
-                        Destination Office<strong className="text-red-500">*</strong>
-                      </Label>
-                      <Select
-                        value={data.docs_destin}
-                        onValueChange={(value) => setData("docs_destin", value)}
-                      >
-                        <SelectTrigger id="docs_destin" className="w-full">
-                          <SelectValue placeholder="Select Destination Office" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Departments</SelectLabel>
-                            {departments.map((dept) => (
-                              <SelectItem key={dept.id} value={dept.depart_name}>
-                                {dept.depart_name}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      {(errors.docs_destin || localErrors.docs_destin) && (
-                        <p className="text-red-500 text-xs">
-                          {errors.docs_destin || localErrors.docs_destin}
-                        </p>
-                      )}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="docs_destin">
+                          Destination Office<strong className="text-red-500">*</strong>
+                        </Label>
+                        <Select
+                          value={data.docs_destin}
+                          onValueChange={(value) => setData("docs_destin", value)}
+                        >
+                          <SelectTrigger id="docs_destin" className="w-full">
+                            <SelectValue placeholder="Select Destination Office" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Departments</SelectLabel>
+                              {departments.map((dept) => (
+                                <SelectItem key={dept.id} value={dept.depart_name}>
+                                  {dept.depart_name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        {(errors.docs_destin || localErrors.docs_destin) && (
+                          <p className="text-red-500 text-xs">
+                            {errors.docs_destin || localErrors.docs_destin}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="act_taken">
+                          Action/Taken<strong className="text-red-500">*</strong>
+                        </Label>
+                        <Select
+                          value={data.act_taken}
+                          onValueChange={(value) => setData("act_taken", value)}
+                        >
+                          <SelectTrigger id="act_taken" className="w-full">
+                            <SelectValue placeholder="Select Action Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Actions Taken</SelectLabel>
+                              {acttype.map((act) => (
+                                <SelectItem key={act.id} value={act.act_name}>
+                                  {act.act_name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        {(errors.act_taken || localErrors.act_taken) && (
+                          <p className="text-red-500 text-xs">
+                            {errors.act_taken || localErrors.act_taken}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -498,7 +532,12 @@ export function AddDocsTrack({
               Success
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Document Routed Successfully! Click okay to proceed to add another document.
+              <span className="block text-xl font-bold">
+                Document Routed Successfully!
+              </span>
+              <span className="block text-sm text-gray-700">
+                Click okay to proceed to add another document.
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -524,7 +563,12 @@ export function AddDocsTrack({
           <AlertDialogHeader>
             <AlertDialogTitle className="text-red-600">⚠️ Error</AlertDialogTitle>
             <AlertDialogDescription>
-              Failed to route document. Please check required fields or make sure values are unique.
+              <span className="block text-xl font-bold">
+                Failed to route document!
+              </span>
+              <span className="block text-sm text-gray-700">
+                Please check required fields or make sure values are unique.
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

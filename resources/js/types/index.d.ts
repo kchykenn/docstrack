@@ -93,7 +93,9 @@ export type AddDtrack = {
   remarks: string;
   seq_no: string;
   docs_destin: string;
+  act_taken: string;
   date: string | null;
+  depart_user: string | null;
   depart_from: string | null;
   due_date: string | null;
   ts_created_at: string | null;

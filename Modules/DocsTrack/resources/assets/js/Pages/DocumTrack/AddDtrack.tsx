@@ -32,6 +32,8 @@ const AddDtrack: React.FC = () => {
       seq_no: string;
       depart_from: string;
       ts_created_at: string | null;
+      act_taken: string;
+      depart_user: string | null;
       docs_destin: string;
       date: string | null;
       from_office: string | null;
@@ -39,6 +41,7 @@ const AddDtrack: React.FC = () => {
       due_date: string | null;
     }[],
     departments: { id: number, depart_name: string }[],
+    acttype: { id: number, act_name: string }[],
     departName: string;
     departUser: string;
   }>()
@@ -54,6 +57,7 @@ const AddDtrack: React.FC = () => {
           autoOfficeConNo={props.autoOfficeConNo}
           dtracks={props.dtracks}
           departments={props.departments}
+          acttype={props.acttype}
           departName={props.departName}
           departUser={props.departUser}
         />

@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   tableCell: {
-    borderWidth: 0.5, // thinner
+    borderWidth: 0.5, 
     padding: 0.5,
     flex: 1,
     textAlign: "center",
@@ -163,7 +163,7 @@ const DTrackPDF: React.FC<Props> = ({ doc }) => {
               <View style={{ flexDirection: "row", height: 30 }}>
                 <View style={[styles.cell, { flex: 6, justifyContent: "center" }]}>
                   <Text>
-                    Knowledge Management - Information & Communications Technology - DTRACK-3.0
+                    Knowledge Management - Information & Communications Technology - DTRACK-4.0
                   </Text>
                 </View>
                 <View style={[styles.cell, { flex: 3, justifyContent: "center" }]}>
@@ -285,8 +285,8 @@ const DTrackPDF: React.FC<Props> = ({ doc }) => {
                   const createdAt = row.ts_created_at
                     ? new Date(row.ts_created_at).toLocaleDateString("en-US")
                     : "";
-                  const dueDate = row.due_date
-                    ? new Date(row.due_date).toLocaleDateString("en-US")
+                  const dueDate = row.ts_created_at
+                    ? new Date(row.ts_created_at).toLocaleDateString("en-US")
                     : "";
 
                   return (
@@ -301,13 +301,13 @@ const DTrackPDF: React.FC<Props> = ({ doc }) => {
                         <Text>{row.docs_destin}</Text>
                       </View>
                       <View style={[styles.cell, { flex: 4 }]}>
-                        <Text>{row.remarks}</Text>
+                        <Text>{row.act_taken}</Text>
                       </View>
                       <View style={[styles.cell, { flex: 2 }]}>
                         <Text>{dueDate}</Text>
                       </View>
                       <View style={[styles.cell, { flex: 2 }]}>
-                        <Text>{row.name}</Text>
+                        <Text>{row.depart_user}</Text>
                       </View>
                     </View>
                   );

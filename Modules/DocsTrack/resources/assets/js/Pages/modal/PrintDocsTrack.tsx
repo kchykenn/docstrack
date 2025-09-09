@@ -3,7 +3,6 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { AddDtrack } from "@/types";
 import { PDFViewer } from "@react-pdf/renderer";
@@ -24,7 +23,7 @@ export const PrintDocsTrack: React.FC<PrintDocsTrackProps> = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-5xl max-h-[95vh] overflow-hidden p-0">
         <DialogHeader className="p-4">
-          <DialogTitle>Print Form</DialogTitle>
+          {/* <DialogTitle>Print Form</DialogTitle> */}
         </DialogHeader>
 
         {doc ? (

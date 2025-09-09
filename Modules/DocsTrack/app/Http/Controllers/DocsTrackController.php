@@ -35,31 +35,42 @@ class DocsTrackController extends Controller
         $departName = $user->depart_name;
         $departUser = $user->first_name . ' ' . $user->middle_name . ' ' . $user->last_name;
 
-        $latestDTrack = DB::table('tbl_dtrack')->orderBy('id', 'desc')->first();
+        $lastRouteNo = DB::table('tbl_dtrack')
+            ->select('route_no')
+            ->orderBy('id', 'desc')
+            ->value('route_no');
 
-        $lastRouteNo = 0;
-        $lastDocsConNo = 0;
-        $lastOfficeConNo = 0;
+        $lastDocsConNo = DB::table('tbl_dtrack')
+            ->select('docs_con_no')
+            ->orderBy('id', 'desc')
+            ->value('docs_con_no');
 
-        if ($latestDTrack) {
-            if (preg_match('/RN-\d{4}-(\d+)/', $latestDTrack->route_no, $matches)) {
-                $lastRouteNo = intval($matches[1]);
-            }
+        $lastOfficeConNo = DB::table('tbl_dtrack')
+            ->select('office_con_no')
+            ->orderBy('id', 'desc')
+            ->value('office_con_no');
 
-            if (preg_match('/DCN-\d{4}-(\d+)/', $latestDTrack->docs_con_no, $matches)) {
-                $lastDocsConNo = intval($matches[1]);
-            }
+        $routeNo = 0;
+        $docsConNo = 0;
+        $officeConNo = 0;
 
-            if (preg_match('/OCN-\d{4}-(\d+)/', $latestDTrack->office_con_no, $matches)) {
-                $lastOfficeConNo = intval($matches[1]);
-            }
+        if ($lastRouteNo && preg_match('/RN-\d{4}-(\d+)/', $lastRouteNo, $matches)) {
+            $routeNo = intval($matches[1]);
+        }
+
+        if ($lastDocsConNo && preg_match('/DCN-\d{4}-(\d+)/', $lastDocsConNo, $matches)) {
+            $docsConNo = intval($matches[1]);
+        }
+
+        if ($lastOfficeConNo && preg_match('/OCN-\d{4}-(\d+)/', $lastOfficeConNo, $matches)) {
+            $officeConNo = intval($matches[1]);
         }
 
         $year = date('Y');
 
-        $autoRouteNo = sprintf('RN-%s-%04d', $year, $lastRouteNo + 1);
-        $autoDocsConNo = sprintf('DCN-%s-%04d', $year, $lastDocsConNo + 1);
-        $autoOfficeConNo = sprintf('OCN-%s-%04d', $year, $lastOfficeConNo + 1);
+        $autoRouteNo = sprintf('RN-%s-%09d', $year, $routeNo + 1);
+        $autoDocsConNo = sprintf('DCN-%s-%09d', $year, $docsConNo + 1);
+        $autoOfficeConNo = sprintf('OCN-%s-%09d', $year, $officeConNo + 1);
 
         $docstype = DB::table('tbl_documtype')
             ->select('id', 'docs_code', 'docs_name', 'docs_stat')
@@ -67,7 +78,7 @@ class DocsTrackController extends Controller
             ->get();
 
         $dtracks = DB::table('tbl_dtrack')
-            ->select('id', 'route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'seq_no', 'docs_destin', 'ts_created_at', 'depart_from')
+            ->select('id', 'route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'seq_no', 'act_taken', 'depart_user', 'docs_destin', 'ts_created_at', 'depart_from')
             ->where('depart_from', $departName)
             ->orderBy('id', 'desc')
             ->get();
@@ -79,6 +90,12 @@ class DocsTrackController extends Controller
             ->orderBy('depart_name', 'asc')
             ->get();
 
+        $acttype = DB::table('tbl_accttype')
+            ->select('id', 'act_name')
+            ->where('act_stat', 1)
+            ->orderBy('act_name', 'asc')
+            ->get();
+
 
         return Inertia::render('DocsTrack::DocumTrack/AddDtrack', [
             'docstype' => $docstype,
@@ -87,6 +104,7 @@ class DocsTrackController extends Controller
             'autoOfficeConNo' => $autoOfficeConNo,
             'dtracks' => $dtracks,
             'departments' => $departments,
+            'acttype' => $acttype,
             'departName' => $departName,
             'departUser' => $departUser,
         ]);
@@ -103,6 +121,7 @@ class DocsTrackController extends Controller
             'docs_type'     => 'required|string',
             'seq_no'        => 'nullable|string|max:10',
             'depart_from'   => 'required|string|max:50',
+            'act_taken'    => 'required|string|max:50',
             'depart_user'   => 'required|string|max:50',
             'docs_destin'   => 'required|string|max:255',
             'remarks'       => 'nullable|string|max:500',
