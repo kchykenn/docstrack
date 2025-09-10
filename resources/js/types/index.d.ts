@@ -66,6 +66,8 @@ export type IncomDTrack = {
     office_con_no: string
     docs_subject: string
     docs_type: string
+    act_taken: string | null
+    status: number
     depart_from: string | null
     docs_destin: string
     ts_created_at: string | null  
@@ -78,9 +80,11 @@ export type Dtrack = {
     office_con_no: string
     docs_subject: string
     docs_type: string
-    depart_from: string
     docs_destin: string
-    ts_created_at: string | null
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    ts_created_at: string | null  
 }
 
 export type AddDtrack = {
@@ -100,3 +104,33 @@ export type AddDtrack = {
   due_date: string | null;
   ts_created_at: string | null;
 };
+
+export type RecevDtrack = {
+    id: number
+    route_no: string
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    docs_destin: string
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    depart_user: string | null
+    remarks: string | null
+    ts_created_at: string | null  
+}
+
+export type Indexdata = {
+    id: number
+    route_no: string
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    docs_destin: string
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    ts_created_at: string | null  
+}

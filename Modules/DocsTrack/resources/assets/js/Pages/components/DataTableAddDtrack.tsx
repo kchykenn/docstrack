@@ -69,6 +69,7 @@ export const getColumns = (
     // { accessorKey: "office_con_no", header: "Office Con No" },
     { accessorKey: "docs_subject", header: "Subject" },
     { accessorKey: "docs_type", header: "Type" },
+    { accessorKey: "act_taken", header: "Action" },
     { accessorKey: "depart_from", header: "From" },
     { accessorKey: "docs_destin", header: "To" },
     {

@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\DocsTrack\Models\DTrack;
+use Modules\DocsTrack\Models\DocsEnctr;
 
 class DocsTrackController extends Controller
 {
@@ -18,7 +19,7 @@ class DocsTrackController extends Controller
         $departName = $user->depart_name;
 
         $dtracks = DB::table('tbl_dtrack')
-            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'depart_from', 'docs_destin', 'ts_created_at')
+            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'act_taken', 'depart_from', 'docs_destin', 'ts_created_at')
             ->orderBy('route_no', 'desc')
             ->get();
 
@@ -110,9 +111,9 @@ class DocsTrackController extends Controller
         ]);
     }
 
+
     public function store(Request $request)
     {
-
         $validated = $request->validate([
             'route_no'      => 'required|string|max:255|unique:tbl_dtrack,route_no',
             'docs_con_no'   => 'required|string|max:255|unique:tbl_dtrack,docs_con_no',
@@ -121,17 +122,19 @@ class DocsTrackController extends Controller
             'docs_type'     => 'required|string',
             'seq_no'        => 'nullable|string|max:10',
             'depart_from'   => 'required|string|max:50',
-            'act_taken'    => 'required|string|max:50',
+            'act_taken'     => 'required|string|max:50',
             'depart_user'   => 'required|string|max:50',
             'docs_destin'   => 'required|string|max:255',
             'remarks'       => 'nullable|string|max:500',
         ]);
 
-        $doc = DTrack::create($validated);
+        $dtrack = DTrack::create($validated);
+        $docsEnctr = DocsEnctr::create($validated);
 
         return redirect()->back()
             ->with('success', 'Document routed successfully!')
-            ->with('doc', $doc->id);
+            ->with('id', $dtrack->id)
+            ->with('id', $docsEnctr->id);
     }
 
 
@@ -140,9 +143,10 @@ class DocsTrackController extends Controller
         $user = Auth::user();
         $departName = $user->depart_name;
 
-        $dtracks = DB::table('tbl_dtrack')
-            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'depart_from', 'docs_destin', 'ts_created_at')
+        $dtracks = DB::table('tbl_docsenctr')
+            ->select('id', 'route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'depart_from', 'act_taken', 'docs_destin', 'status', 'ts_created_at')
             ->where('docs_destin', $departName)
+            ->orderBy('route_no', 'desc')
             ->get();
 
         return Inertia::render('DocsTrack::DocumTrack/DTrackIncom', [
@@ -151,6 +155,83 @@ class DocsTrackController extends Controller
         ]);
     }
 
+
+    public function received($id)
+    {
+        $docsEnctr = DocsEnctr::findOrFail($id);
+        $docsEnctr->status = 1;
+        $docsEnctr->save();
+
+        return redirect()->back()
+            ->with('success', 'Document marked as received!')
+            ->with('id', $docsEnctr->id);
+    }
+
+
+    public function recev()
+    {
+        $user = Auth::user();
+        $departName = $user->depart_name;
+        $departUser = $user->first_name . ' ' . $user->middle_name . ' ' . $user->last_name;
+
+        $dtracks = DB::table('tbl_docsenctr')
+            ->select('id', 'route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'depart_from', 'act_taken', 'docs_destin', 'status', 'ts_created_at')
+            ->where('docs_destin', $departName)
+            ->orderBy('route_no', 'desc')
+            ->get();
+
+        $docstype = DB::table('tbl_documtype')
+            ->select('id', 'docs_code', 'docs_name', 'docs_stat')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        $departments = DB::table('tbl_department')
+            ->select('id', 'depart_name')
+            ->where('depart_stat', 1)
+            ->orderBy('depart_name', 'asc')
+            ->get();
+
+        $acttype = DB::table('tbl_accttype')
+            ->select('id', 'act_name')
+            ->where('act_stat', 1)
+            ->orderBy('act_name', 'asc')
+            ->get();
+
+
+        return Inertia::render('DocsTrack::DocumTrack/RecevDTrack', [
+            'docstype' => $docstype,
+            'dtracks' => $dtracks,
+            'departments' => $departments,
+            'acttype' => $acttype,
+            'departName' => $departName,
+            'departUser' => $departUser,
+        ]);
+    }
+
+    public function recevstore(Request $request)
+    {
+        $validated = $request->validate([
+            'route_no'      => 'required|string|max:255',
+            'docs_con_no'   => 'required|string|max:255',
+            'office_con_no' => 'required|string|max:255',
+            'docs_subject'  => 'required|string|max:255',
+            'docs_type'     => 'required|string',
+            'seq_no'        => 'nullable|string|max:10',
+            'depart_from'   => 'required|string|max:50',
+            'act_taken'     => 'required|string|max:50',
+            'depart_user'   => 'required|string|max:50',
+            'docs_destin'   => 'required|string|max:255',
+            'remarks'       => 'nullable|string|max:500',
+        ]);
+
+        $validated['status'] = 0;
+
+        $docsEnctr = DocsEnctr::create($validated);
+
+        return redirect()->back()
+            ->with('success', 'Document routed successfully!')
+            ->with('id', $docsEnctr->id);
+    }
 
     public function show($id)
     {

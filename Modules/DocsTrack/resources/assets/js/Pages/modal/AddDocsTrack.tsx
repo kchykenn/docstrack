@@ -148,6 +148,7 @@ export function AddDocsTrack({
       onError: () => {
         onOpenChange(false)
         setErrorAlertOpen(true)
+        
       },
     })
   }

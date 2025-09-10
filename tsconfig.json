@@ -131,5 +131,5 @@
         "modules/IAM/resources/assets/js/**/*.ts",
         "modules/IAM/resources/assets/js/**/*.d.ts",
         "modules/IAM/resources/assets/js/**/*.tsx"
-    ]
+, "Modules/DocsTrack/resources/assets/js/Pages/DocumTrack/RevDTracktsx"    ]
 }

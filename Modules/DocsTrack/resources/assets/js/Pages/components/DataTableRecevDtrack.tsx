@@ -13,7 +13,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ChevronDown, HomeIcon, Inbox, MoreHorizontal, Send, Copy, Eye, CheckCircle, Trash2 } from "lucide-react"
+import { ChevronDown, HomeIcon, Inbox, MoreHorizontal, Send, Copy, Eye, CheckCircle, Trash2, ListEnd } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -43,23 +43,43 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { router } from "@inertiajs/react";
-import { IncomDTrack, PageProps } from '@/types';
+import { RecevDtrack } from '@/types';
+import { RouteDocsTrack } from "../modal/RouteDocsTrack";
 
-interface Props extends PageProps {
-    data: IncomDTrack[];
+interface Props {
+    data: RecevDtrack[];
+
+    docstype?: string;
+    autoRouteNo?: string;
+    autoDocsConNo?: string;
+    autoOfficeConNo?: string;
+    departments?: { id: number; depart_name: string }[];
+    acttype?: { id: number; act_name: string }[];
+    departName?: string;
+    departUser?: string;
 }
 
-export function DataTableIncomDtrack({ data }: Props) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
-    const [globalFilter, setGlobalFilter] = React.useState("")
-    const [receiveSuccess, setReceiveSuccess] = React.useState(false)
-    // const [rows] = React.useState(data)
+export function DataTableRecevDtrack({
+    data,
+    docstype,
+    autoRouteNo,
+    autoDocsConNo,
+    autoOfficeConNo,
+    departments,
+    acttype,
+    departName,
+    departUser
+}: Props) {
+    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = React.useState({});
+    const [globalFilter, setGlobalFilter] = React.useState("");
+    const [receiveSuccess, setReceiveSuccess] = React.useState(false);
+    const [openRouteModal, setOpenRouteModal] = React.useState(false);
+    const [selectedDtrack, setSelectedDtrack] = React.useState<RecevDtrack | null>(null);
 
-
-    const columns = React.useMemo<ColumnDef<IncomDTrack>[]>(() => [
+    const columns = React.useMemo<ColumnDef<RecevDtrack>[]>(() => [
         { accessorKey: "route_no", header: "Route No" },
         { accessorKey: "docs_subject", header: "Subject" },
         { accessorKey: "docs_type", header: "Type" },
@@ -70,23 +90,19 @@ export function DataTableIncomDtrack({ data }: Props) {
             accessorKey: "status",
             header: "Status",
             cell: ({ getValue }) => {
-                const status = getValue() as number
-                if (status == 0) {
-                    return <span className="text-red-600 font-semibold">Pending</span>
-                }
-                if (status == 1) {
-                    return <span className="text-green-600 font-semibold">Received</span>
-                }
-                return <span className="text-gray-500">Unknown</span>
+                const status = getValue() as number;
+                if (status == 0) return <span className="text-red-600 font-semibold">Pending</span>;
+                if (status == 1) return <span className="text-green-600 font-semibold">Received</span>;
+                return <span className="text-gray-500">Unknown</span>;
             },
         },
         {
             accessorKey: "ts_created_at",
             header: "Date Created/Routed",
             cell: ({ getValue }) => {
-                const raw = getValue() as string | null
-                if (!raw) return "—"
-                const date = new Date(raw)
+                const raw = getValue() as string | null;
+                if (!raw) return "—";
+                const date = new Date(raw);
                 return date.toLocaleString("en-US", {
                     month: "long",
                     day: "numeric",
@@ -94,7 +110,7 @@ export function DataTableIncomDtrack({ data }: Props) {
                     hour: "numeric",
                     minute: "2-digit",
                     hour12: true,
-                })
+                });
             },
         },
         {
@@ -104,7 +120,7 @@ export function DataTableIncomDtrack({ data }: Props) {
                 <div className="bg-black text-white text-center px-2 py-1">Actions</div>
             ),
             cell: ({ row }) => {
-                const dtrack = row.original
+                const dtrack = row.original;
                 return (
                     <div className="w-full flex justify-center">
                         <DropdownMenu>
@@ -117,37 +133,31 @@ export function DataTableIncomDtrack({ data }: Props) {
                             <DropdownMenuContent align="center">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
 
-                                <DropdownMenuItem
-                                    onClick={() => navigator.clipboard.writeText(dtrack.route_no)}
-                                >
-                                    <Copy className="mr-2 h-4 w-4" />
+                                <DropdownMenuItem onClick={() => navigator.clipboard.writeText(dtrack.route_no)}>
+                                    <Copy className="mr-2 h-4 w-4 text-black-600" />
                                     Copy Route No
                                 </DropdownMenuItem>
 
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem
-                                    onClick={() => console.log("View", dtrack.route_no)}
-                                >
-                                    <Eye className="mr-2 h-4 w-4" />
+                                <DropdownMenuItem onClick={() => console.log("View", dtrack.route_no)}>
+                                    <Eye className="mr-2 h-4 w-4 text-black-600" />
                                     View Details
                                 </DropdownMenuItem>
 
                                 <DropdownMenuItem
-                                    className="text-green-600"
-                                    onClick={(e) => {
-                                        e.preventDefault()
-                                        const id = dtrack.id
-                                        router.post(`/dtracks/received/${id}`, {}, {
-                                            onSuccess: () => {
-                                                setReceiveSuccess(true)
-                                            },
-                                            onError: () => alert("Failed to mark as received."),
-                                        })
+                                    onClick={() => {
+                                        setSelectedDtrack(dtrack);
+                                        setOpenRouteModal(true);
                                     }}
                                 >
-                                    <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
-                                    Received
+                                    <Send className="mr-2 h-4 w-4 text-blue-600" />
+                                    Route Docs
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem onClick={() => console.log("End Route", dtrack.route_no)}>
+                                    <ListEnd className="mr-2 h-4 w-4 text-green-600" />
+                                    End Route
                                 </DropdownMenuItem>
 
                                 <DropdownMenuItem
@@ -160,13 +170,13 @@ export function DataTableIncomDtrack({ data }: Props) {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
-                )
+                );
             },
         },
-    ], [])
-
+    ], []);
+    
     const filteredData = React.useMemo(
-        () => data.filter((row) => row.status == 0),
+        () => data.filter((row) => row.status == 1),
         [data]
     )
 
@@ -181,32 +191,30 @@ export function DataTableIncomDtrack({ data }: Props) {
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-            globalFilter,
-        },
+        state: { sorting, columnFilters, columnVisibility, rowSelection, globalFilter },
         globalFilterFn: (row, columnId, filterValue) => {
             return Object.values(row.original)
                 .join(" ")
                 .toLowerCase()
-                .includes(filterValue.toLowerCase())
+                .includes(filterValue.toLowerCase());
         },
-    })
+    });
 
     return (
         <>
             <div className="w-full">
                 <span className="text-lg font-medium mb-2 flex items-center gap-2 text-left">
                     <Inbox className="w-8 h-8 text-primary" />
-                    Incoming Documents
+                    Received Documents
                 </span>
                 <div className="flex items-center py-4 gap-2">
                     <Button onClick={() => router.visit("/dtracks")}>
                         <HomeIcon className="w-4 h-4 mr-2" />
                         Back to Master Page
+                    </Button>
+                    <Button onClick={() => router.visit("/dtracks/incoming")}>
+                        <Inbox className="w-4 h-4 mr-2" />
+                        Incoming Documents
                     </Button>
                     <Button onClick={() => router.visit("/dtracks/create")}>
                         <Send className="w-4 h-4 mr-2" />
@@ -316,6 +324,23 @@ export function DataTableIncomDtrack({ data }: Props) {
                     </div>
                 </div>
             </div>
+
+            {selectedDtrack && (
+                <RouteDocsTrack
+                    open={openRouteModal}
+                    onOpenChange={setOpenRouteModal}
+                    dtrack={selectedDtrack}
+                    docstype={docstype || ""}
+                    autoRouteNo={autoRouteNo || ""}
+                    autoDocsConNo={autoDocsConNo || ""}
+                    autoOfficeConNo={autoOfficeConNo || ""}
+                    departments={departments || []}
+                    acttype={acttype || []}
+                    departName={departName || ""}
+                    departUser={departUser || ""}
+                />
+            )}
+
             <AlertDialog open={receiveSuccess} onOpenChange={setReceiveSuccess}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -338,7 +363,7 @@ export function DataTableIncomDtrack({ data }: Props) {
                             onClick={() => {
                                 setReceiveSuccess(false)
                                 router.visit("/dtracks/incoming", {
-                                    onFinish: () => window.location.reload(), 
+                                    onFinish: () => window.location.reload(),
                                 })
                             }}
                         >

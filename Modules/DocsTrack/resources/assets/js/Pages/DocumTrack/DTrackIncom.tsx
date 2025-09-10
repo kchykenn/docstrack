@@ -17,6 +17,8 @@ export type Dtrack = {
     docs_subject: string
     docs_type: string
     docs_destin: string
+    act_taken: string | null
+    status: number
     depart_from: string | null
     ts_created_at: string | null  
 }

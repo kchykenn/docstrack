@@ -48,6 +48,7 @@ export const columns: ColumnDef<Dtrack>[] = [
     // { accessorKey: "office_con_no", header: "Office Control No" },
     { accessorKey: "docs_subject", header: "Subject" },
     { accessorKey: "docs_type", header: "Type" },
+    { accessorKey: "act_taken", header: "Action" },
     { accessorKey: "depart_from", header: "From" },
     { accessorKey: "docs_destin", header: "To" },
     {
