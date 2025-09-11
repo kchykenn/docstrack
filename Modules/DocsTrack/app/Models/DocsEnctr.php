@@ -24,6 +24,9 @@ class DocsEnctr extends Model
         'act_taken',
         'depart_user',
         'docs_destin',
+        'date_received',
+        'date_rerouted',
+        'date_end',
         'status',
     ];
     

@@ -76,6 +76,7 @@ export function DataTableRecevDtrack({
     const [rowSelection, setRowSelection] = React.useState({});
     const [globalFilter, setGlobalFilter] = React.useState("");
     const [receiveSuccess, setReceiveSuccess] = React.useState(false);
+    const [EndRouteSuccess, setEndRouteSuccess] = React.useState(false);
     const [openRouteModal, setOpenRouteModal] = React.useState(false);
     const [selectedDtrack, setSelectedDtrack] = React.useState<RecevDtrack | null>(null);
 
@@ -155,7 +156,19 @@ export function DataTableRecevDtrack({
                                     Route Docs
                                 </DropdownMenuItem>
 
-                                <DropdownMenuItem onClick={() => console.log("End Route", dtrack.route_no)}>
+                                <DropdownMenuItem
+                                    className="text-green-600"
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        const id = dtrack.id
+                                        router.post(`/dtracks/endroute/${id}`, {}, {
+                                            onSuccess: () => {
+                                                setEndRouteSuccess(true)
+                                            },
+                                            onError: () => alert("Failed to mark as received."),
+                                        })
+                                    }}
+                                >
                                     <ListEnd className="mr-2 h-4 w-4 text-green-600" />
                                     End Route
                                 </DropdownMenuItem>
@@ -174,7 +187,7 @@ export function DataTableRecevDtrack({
             },
         },
     ], []);
-    
+
     const filteredData = React.useMemo(
         () => data.filter((row) => row.status == 1),
         [data]
@@ -363,6 +376,39 @@ export function DataTableRecevDtrack({
                             onClick={() => {
                                 setReceiveSuccess(false)
                                 router.visit("/dtracks/incoming", {
+                                    onFinish: () => window.location.reload(),
+                                })
+                            }}
+                        >
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Okay
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={EndRouteSuccess} onOpenChange={setEndRouteSuccess}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2 text-green-600">
+                            <CheckCircle className="h-5 w-5 text-green-600" />
+                            Success
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            <span className="block text-xl font-bold">
+                                End Document Transaction Successfully!
+                            </span>
+                            <span className="block text-sm text-gray-700">
+                                Please click okay to proceed.
+                            </span>
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <Button
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => {
+                                setEndRouteSuccess(false)
+                                router.visit("/dtracks/recev", {
                                     onFinish: () => window.location.reload(),
                                 })
                             }}

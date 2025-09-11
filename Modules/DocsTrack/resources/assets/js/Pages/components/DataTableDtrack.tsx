@@ -1,48 +1,54 @@
 "use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
-    ColumnDef,
-    ColumnFiltersState,
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    SortingState,
-    useReactTable,
-    VisibilityState,
-} from "@tanstack/react-table"
-import { ChevronDown, MoreHorizontal } from "lucide-react"
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+} from "@tanstack/react-table";
+import { ChevronDown, MoreHorizontal, FileArchiveIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { FileArchiveIcon } from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-import { Dtrack, PageProps } from '@/types';
+import { Dtrack, PageProps } from "@/types";
+import { PrintDocsTrackHistoryDetails } from "../modal/PrintDocsTrackHistoryDetails";
+import { PrintDocsTrackHistory } from "../modal/PrintDocsTrackHistory";
 
 interface Props extends PageProps {
-    data: Dtrack[];
+  data: Dtrack[];
 }
 
-export const columns: ColumnDef<Dtrack>[] = [
+export const getColumns = (
+  onPrint: (data: Dtrack) => void,
+  onPrintHistory: (data: Dtrack) => void,
+  //   onEdit: (doc: Dtrack) => void,
+  //   onDelete: (doc: Dtrack) => void
+): ColumnDef<Dtrack>[] => [
     { accessorKey: "route_no", header: "Route No" },
     // { accessorKey: "docs_con_no", header: "Docs Control No" },
     // { accessorKey: "office_con_no", header: "Office Control No" },
@@ -52,213 +58,273 @@ export const columns: ColumnDef<Dtrack>[] = [
     { accessorKey: "depart_from", header: "From" },
     { accessorKey: "docs_destin", header: "To" },
     {
-        accessorKey: "ts_created_at",
-        header: "Date Created/Routed",
-        cell: ({ getValue }) => {
-            const raw = getValue() as string | null
-            if (!raw) return "—"
+      accessorKey: "ts_created_at",
+      header: "Date Created/Routed",
+      cell: ({ getValue }) => {
+        const raw = getValue() as string | null;
+        if (!raw) return "—";
 
-            const date = new Date(raw)
+        const date = new Date(raw);
 
-            return date.toLocaleString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-            })
-        },
+        return date.toLocaleString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        });
+      },
     },
     {
-        id: "actions",
-        enableHiding: false,
-        header: () => (
-            <div className="bg-black text-white text-center px-2 py-1">Actions</div>
-        ),
-        cell: ({ row }) => {
-            const dtrack = row.original
-            return (
-                <div className="w-full flex justify-center">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="center">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                                onClick={() => navigator.clipboard.writeText(dtrack.route_no)}
-                            >
-                                Copy Route No
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => console.log("View", dtrack.route_no)}>
-                                View Details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => console.log("Edit", dtrack.route_no)}>
-                                Print
-                            </DropdownMenuItem>
-                            {/* <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => console.log("Delete", dtrack.route_no)}
-                            >
-                                Delete
-                            </DropdownMenuItem> */}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            )
-        },
+      id: "actions",
+      enableHiding: false,
+      header: () => (
+        <div className="bg-black text-white text-center px-2 py-1">Actions</div>
+      ),
+      cell: ({ row }) => {
+        const dtrack = row.original;
+        return (
+          <div className="w-full flex justify-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() =>
+                    navigator.clipboard.writeText(dtrack.route_no)
+                  }
+                >
+                  Copy Route No
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => onPrint(row.original)}>
+                  View DocsTrack
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onPrintHistory(row.original)}>
+                  View History
+                </DropdownMenuItem>
+                {/* <DropdownMenuItem
+                className="text-red-600"
+                onClick={() => onDelete(row.original)}
+              >
+                Delete
+              </DropdownMenuItem> */}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        );
+      },
     },
-]
+  ];
 
 export function DataTableDtrack({ data }: Props) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
-    const [globalFilter, setGlobalFilter] = React.useState("")
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
-    const table = useReactTable({
-        data,
-        columns,
-        onSortingChange: setSorting,
-        onColumnFiltersChange: setColumnFilters,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
-        state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
-            globalFilter,
-        },
-        globalFilterFn: (row, columnId, filterValue) => {
-            // check all visible columns
-            return Object.values(row.original)
-                .join(" ")
-                .toLowerCase()
-                .includes(filterValue.toLowerCase())
-        },
-    })
+  const [printOpen, setPrintOpen] = React.useState(false);
+  const [printHistoryOpen, setPrintHistoryOpen] = React.useState(false);
+  const [selectedDoc, setSelectedDoc] = React.useState<Dtrack | null>(null);
 
-    return (
-        <div className="w-full">
-            <span className="text-lg font-medium mb-2 flex items-center gap-2 text-left">
-                <FileArchiveIcon className="w-8 h-8 text-primary" />
-                Master List Page
-            </span>
-            <div className="flex items-center py-4">
-                <Input
-                    placeholder="Search all..."
-                    value={globalFilter ?? ""}
-                    onChange={(event) => setGlobalFilter(event.target.value)}
-                    className="max-w-sm"
-                />
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Filters <ChevronDown />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        {table
-                            .getAllColumns()
-                            .filter((column) => column.getCanHide())
-                            .map((column) => {
-                                return (
-                                    <DropdownMenuCheckboxItem
-                                        key={column.id}
-                                        className="capitalize"
-                                        checked={column.getIsVisible()}
-                                        onCheckedChange={(value) =>
-                                            column.toggleVisibility(!!value)
-                                        }
-                                    >
-                                        {column.id}
-                                    </DropdownMenuCheckboxItem>
-                                )
-                            })}
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id} className="bg-black text-xs text-white">
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
-                                                )}
-                                        </TableHead>
-                                    )
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
+  const handlePrint = async (doc: Dtrack) => {
+    try {
+      const res = await fetch(`/dtracks/enctr/${doc.route_no}`);
+      const encounters = await res.json();
 
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row) => (
-                                <TableRow
-                                    key={row.id}
-                                    data-state={row.getIsSelected() && "selected"}
-                                    className="text-xs"
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
-                                </TableCell>
-                            </TableRow>
+      setSelectedDoc({
+        ...doc,
+        rows: encounters,
+      });
+
+      setPrintOpen(true);
+    } catch (err) {
+      console.error("Error fetching encounters", err);
+    }
+  };
+
+  const handlePrintHistory = async (doc: Dtrack) => {
+    try {
+      const res = await fetch(`/dtracks/enctr/${doc.route_no}`);
+      const encounters = await res.json();
+      setSelectedDoc({
+        ...doc,
+        rows: encounters,
+      });
+      setPrintHistoryOpen(true);
+    } catch (err) {
+      console.error("Error fetching encounters", err);
+    }
+  };
+
+  const columns = getColumns(handlePrint, handlePrintHistory);
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+      globalFilter,
+    },
+    globalFilterFn: (row, columnId, filterValue) => {
+      return Object.values(row.original)
+        .join(" ")
+        .toLowerCase()
+        .includes(filterValue.toLowerCase());
+    },
+  });
+
+  return (
+    <div className="w-full">
+      <span className="text-lg font-medium mb-2 flex items-center gap-2 text-left">
+        <FileArchiveIcon className="w-8 h-8 text-primary" />
+        Master List Page
+      </span>
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Search all..."
+          value={globalFilter ?? ""}
+          onChange={(event) => setGlobalFilter(event.target.value)}
+          className="max-w-sm"
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Filters <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="bg-black text-xs text-white"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
                         )}
-                    </TableBody>
-                </Table>
-            </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="text-muted-foreground flex-1 text-sm">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
-                <div className="space-x-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        Next
-                    </Button>
-                </div>
-            </div>
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="text-xs"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="text-muted-foreground flex-1 text-sm">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
         </div>
-    )
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+
+      {/* 👉 Print modal here */}
+      <PrintDocsTrackHistory
+        open={printOpen}
+        onClose={() => setPrintOpen(false)}
+        data={selectedDoc}
+      />
+      <PrintDocsTrackHistoryDetails
+        open={printHistoryOpen}
+        onClose={() => setPrintHistoryOpen(false)}
+        data={selectedDoc}
+      />
+    </div>
+  );
 }

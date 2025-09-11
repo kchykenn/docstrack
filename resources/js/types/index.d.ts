@@ -84,7 +84,10 @@ export type Dtrack = {
     act_taken: string | null
     status: number
     depart_from: string | null
+    depart_user: string | null
     ts_created_at: string | null  
+    remarks: string | null
+    rows?: Row[]
 }
 
 export type AddDtrack = {
@@ -132,5 +135,15 @@ export type Indexdata = {
     act_taken: string | null
     status: number
     depart_from: string | null
+    depart_user: string | null
     ts_created_at: string | null  
+    remarks: string | null
 }
+
+  export interface Row {
+    ts_created_at: string;
+    depart_from?: string;
+    docs_destin?: string;
+    act_taken?: string;
+    depart_user?: string;
+  }

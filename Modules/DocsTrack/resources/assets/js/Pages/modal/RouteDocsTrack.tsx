@@ -56,7 +56,7 @@ export function RouteDocsTrack({
     docs_type: dtrack?.docs_type || docstype,
     docs_destin: "",
     act_taken: "",
-    depart_from: dtrack?.depart_from || departName,
+    depart_from: departName,
     depart_user: dtrack?.depart_user || departUser,
     remarks: dtrack?.remarks || "",
     seq_no: "yes",
@@ -389,7 +389,7 @@ export function RouteDocsTrack({
                   Received Document Routed Successfully!
                 </span>
                 <span className="block text-sm text-gray-700">
-                  Click okay to proceed to route another document.
+                  All data with this route number marked as end Transaction!
                 </span>
               </DialogDescription>
             </DialogHeader>

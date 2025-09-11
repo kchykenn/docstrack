@@ -23,10 +23,26 @@ class DocsTrackController extends Controller
             ->orderBy('route_no', 'desc')
             ->get();
 
+        $denctr = DB::table('tbl_docsenctr')
+            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'act_taken', 'depart_from', 'docs_destin', 'status', 'ts_created_at')
+            ->orderBy('route_no', 'desc')
+            ->get();
+
         return Inertia::render('DocsTrack::DocumTrack/index', [
             'dtracks' => $dtracks,
+            'denctr' => $denctr,
             'depart_name' => $departName,
         ]);
+    }
+
+    public function enctr($routeNo)
+    {
+        $encounters = DB::table('tbl_docsenctr')
+            ->where('route_no', $routeNo)
+            ->orderBy('ts_created_at', 'asc')
+            ->get();
+
+        return response()->json($encounters);
     }
 
     public function create()
@@ -156,18 +172,6 @@ class DocsTrackController extends Controller
     }
 
 
-    public function received($id)
-    {
-        $docsEnctr = DocsEnctr::findOrFail($id);
-        $docsEnctr->status = 1;
-        $docsEnctr->save();
-
-        return redirect()->back()
-            ->with('success', 'Document marked as received!')
-            ->with('id', $docsEnctr->id);
-    }
-
-
     public function recev()
     {
         $user = Auth::user();
@@ -208,6 +212,43 @@ class DocsTrackController extends Controller
         ]);
     }
 
+    public function received($id)
+    {
+        $docsEnctr = DocsEnctr::findOrFail($id);
+
+        $docsEnctr->status = 1;
+        $docsEnctr->date_received = now('Asia/Manila')->format('Y-m-d H:i:s');
+        $docsEnctr->save();
+
+        return redirect()->back()
+            ->with('success', 'Document marked as received!')
+            ->with('id', $docsEnctr->id);
+    }
+
+
+    public function endroute($id)
+    {
+        $docsEnctr = DocsEnctr::findOrFail($id);
+
+        DocsEnctr::where('route_no', $docsEnctr->route_no)
+            ->update(['status' => 2]);
+
+        $lastEnctr = DocsEnctr::where('route_no', $docsEnctr->route_no)
+            ->latest('id')
+            ->first();
+
+        if ($lastEnctr) {
+            $lastEnctr->date_end = now('Asia/Manila')->format('Y-m-d H:i:s');
+            $lastEnctr->save();
+        }
+
+        return redirect()->back()
+            ->with('success', 'All documents with this route number marked as end Transaction!')
+            ->with('id', $docsEnctr->id);
+    }
+
+
+
     public function recevstore(Request $request)
     {
         $validated = $request->validate([
@@ -225,6 +266,8 @@ class DocsTrackController extends Controller
         ]);
 
         $validated['status'] = 0;
+        $validated['date_rerouted'] = now('Asia/Manila')->format('Y-m-d H:i:s');
+
 
         $docsEnctr = DocsEnctr::create($validated);
 
