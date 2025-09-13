@@ -6,3 +6,5 @@ Create Docs Type References for Dynamic Adding
 -Create DTrack Forms for Details Route
 
 install npm install framer-motion : for animate in sending or routing the forms
+npm install @react-pdf/renderer --save for pdf convert html to pdf viewer
+npm install jsbarcode canvas --for  barcode

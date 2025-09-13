@@ -1,9 +1,12 @@
+import { PageProps as InertiaPageProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
     user: User;
 }
+
+export type PageProps<T = object> = InertiaPageProps<T> & SharedData;
 
 export interface BreadcrumbItem {
     title: string;
@@ -54,3 +57,93 @@ export interface Permission {
     module: string;
     guard_name: string;
 }
+
+
+export type IncomDTrack = {
+    id: number
+    route_no: string 
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    docs_destin: string
+    ts_created_at: string | null  
+}
+
+export type Dtrack = {
+    id: number
+    route_no: string
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    docs_destin: string
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    depart_user: string | null
+    ts_created_at: string | null  
+    remarks: string | null
+    rows?: Row[]
+}
+
+export type AddDtrack = {
+  id: number;
+  route_no: string;
+  docs_con_no: string;
+  office_con_no: string;
+  docs_subject: string;
+  docs_type: string;
+  remarks: string;
+  seq_no: string;
+  docs_destin: string;
+  act_taken: string;
+  date: string | null;
+  depart_user: string | null;
+  depart_from: string | null;
+  due_date: string | null;
+  ts_created_at: string | null;
+};
+
+export type RecevDtrack = {
+    id: number
+    route_no: string
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    docs_destin: string
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    depart_user: string | null
+    remarks: string | null
+    ts_created_at: string | null  
+}
+
+export type Indexdata = {
+    id: number
+    route_no: string
+    docs_con_no: string
+    office_con_no: string
+    docs_subject: string
+    docs_type: string
+    docs_destin: string
+    act_taken: string | null
+    status: number
+    depart_from: string | null
+    depart_user: string | null
+    ts_created_at: string | null  
+    remarks: string | null
+}
+
+  export interface Row {
+    ts_created_at: string;
+    depart_from?: string;
+    docs_destin?: string;
+    act_taken?: string;
+    depart_user?: string;
+  }

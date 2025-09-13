@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\References\Http\Controllers\ActionTypeController;
 use Modules\References\Http\Controllers\DepartmentController;
 use Modules\References\Http\Controllers\DivisionController;
 use Modules\References\Http\Controllers\DocsTypeController;
@@ -16,4 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/addDocsType', [DocsTypeController::class, 'index'])->name('addDivision.index');
     Route::post('/storeDocsType', [DocsTypeController::class, 'storeDocsType'])->name('storeDocsType.storeDocsType');
+
+    Route::get('/addActionType', [ActionTypeController::class, 'index'])->name('addActionType.index');
+    Route::post('/storeActionType', [ActionTypeController::class, 'storeActionType'])->name('storeActionType.storeActionType');
 });

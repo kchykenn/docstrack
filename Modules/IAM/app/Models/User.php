@@ -50,6 +50,7 @@ class User extends Model implements CipherSweetEncrypted, IsFilterable
         'last_name',
         'name_suffix',
         'name_extension',
+        'depart_name',
         'email',
         'password',
         'sex',

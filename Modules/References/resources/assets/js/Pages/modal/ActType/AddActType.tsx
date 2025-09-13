@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useForm, router } from "@inertiajs/react";
-
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { X, Save } from "lucide-react";
+
 import {
   Select,
   SelectContent,
@@ -24,99 +25,101 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { X, Save } from "lucide-react";
 import AppLogoDepartDiv from "@/components/app-logoDepartDiv";
 
-export function AddDivision({ open, onOpenChange, autoDivisionCode }: { open: boolean, onOpenChange: (open: boolean) => void, autoDivisionCode: string }) {
+export function AddActType({ open, onOpenChange, autoActCode }: { open: boolean, onOpenChange: (open: boolean) => void, autoActCode: string }) {
   const { data, setData, post, processing, reset, errors } = useForm({
-    depart_code: autoDivisionCode || "",
-    depart_name: "",
-    div_stat: "",
+    act_code: autoActCode || "",
+    act_name: "",
+    act_stat: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    post('/storeDivision', {
+    post('/storeActionType', {
       onSuccess: () => {
-        alert("Division added successfully!");
+        alert("Action Type Added successfully!");
         reset();
         onOpenChange(false);
-        router.visit('/addDivision');
+        router.visit('/addActionType');
       },
     });
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl top-4 !translate-y-0" onInteractOutside={e => e.preventDefault()}>
+      <DialogContent
+        className="sm:max-w-xl top-4 !translate-y-0"
+        onInteractOutside={e => e.preventDefault()}
+      >
         <DialogHeader>
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <AppLogoDepartDiv />
             </div>
             <div>
-              <DialogTitle>ADD Division</DialogTitle>
+              <DialogTitle>ADD Action Type</DialogTitle>
               <DialogDescription className="text-black font-bold">
                 Caraga Region Documents Tracking System
               </DialogDescription>
               <DialogDescription>
-                Fill in the fields to add a new division.
+                Fill in the fields to add a new Action Type.
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
-
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 mt-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="depart_code">Division Code<strong className="text-red-500">*</strong></Label>
+                <Label htmlFor="act_code">Action Code<strong className="text-red-500">*</strong></Label>
                 <Input
-                  id="depart_code"
-                  name="depart_code"
-                  value={data.depart_code}
-                  onChange={(e) => setData("depart_code", e.target.value)}
+                  id="act_code"
+                  name="act_code"
+                  value={data.act_code}
                   readOnly
                   className="bg-gray-100"
                 />
-                {errors.depart_code && <span className="text-sm text-red-500">{errors.depart_code}</span>}
+                {errors.act_code && <span className="text-sm text-red-500">{errors.act_code}</span>}
               </div>
-              <div className="flex flex-col gap-2" />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="depart_name">Division Name<strong className="text-red-500">*</strong></Label>
+              <Label htmlFor="act_name">Action Name<strong className="text-red-500">*</strong></Label>
               <Textarea
-                id="depart_name"
-                name="depart_name"
+                id="act_name"
+                name="act_name"
+                value={data.act_name}
+                onChange={(e) => setData("act_name", e.target.value)}
                 className="w-full min-h-[100px]"
-                value={data.depart_name}
-                onChange={(e) => setData("depart_name", e.target.value.toUpperCase())}
                 autoFocus
               />
-              {errors.depart_name && <span className="text-sm text-red-500">{errors.depart_name}</span>}
+              {errors.act_name && <span className="text-sm text-red-500">{errors.act_name}</span>}
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="div_stat">Division Status<strong className="text-red-500">*</strong></Label>
+              <Label htmlFor="act_stat">Action Status<strong className="text-red-500">*</strong></Label>
               <Select
-                value={data.div_stat}
-                onValueChange={(value) => setData("div_stat", value)}
+                name="act_stat"
+                value={data.act_stat}
+                onValueChange={(value) => setData("act_stat", value)}
+                required
               >
-                <SelectTrigger id="div_stat" className="w-full">
-                  <SelectValue placeholder="Select Division Status" />
+                <SelectTrigger id="act_stat" className="w-full">
+                  <SelectValue placeholder="Select Action Status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Status</SelectLabel>
+                    <SelectLabel>Select Action Status</SelectLabel>
                     <SelectItem value="1">Active</SelectItem>
                     <SelectItem value="0">Inactive</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              {errors.div_stat && <span className="text-sm text-red-500">{errors.div_stat}</span>}
+              {errors.act_stat && <span className="text-sm text-red-500">{errors.act_stat}</span>}
             </div>
+            
           </div>
 
           <DialogFooter className="mt-8">

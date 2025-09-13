@@ -46,6 +46,10 @@ const footerNavItems: NavItem[] = [
                 title: 'Document Type',
                 href: '/addDocsType',
             },
+            {
+                title: 'Action Type',
+                href: '/addActionType',
+            },
         ],
     },
     {

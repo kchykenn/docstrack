@@ -106,26 +106,30 @@
 
         /* Completeness */
         // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
-            "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-            "baseUrl": ".",
-            "paths": {
-                "@/*": ["./resources/js/*"],
-                "@types/*": ["./resources/js/types/*"],
-                "@models/*": ["./Modules/DocsTrack/app/Models/*"],
-                "@components/*": ["./resources/js/Components/*"],
-                "ziggy-js": ["./vendor/tightenco/ziggy"]
-            },
-            "jsx": "react-jsx"
+        "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./resources/js/*"],
+            "@types/*": ["./resources/js/types/*"],
+            "@models/*": ["./Modules/DocsTrack/app/Models/*"],
+            "@components/*": ["./resources/js/Components/*"],
+            "@assets/*": ["./Modules/DocsTrack/resources/assets/*"], 
+            "ziggy-js": ["./vendor/tightenco/ziggy"]
         },
-        "include": [
-            "resources/js/**/*.ts",
-            "resources/js/**/*.d.ts",
-            "resources/js/**/*.tsx",
-            "modules/DocsTrack/resources/assets/js/**/*.ts",
-            "modules/DocsTrack/resources/assets/js/**/*.d.ts",
-            "modules/DocsTrack/resources/assets/js/**/*.tsx",
-            "modules/References/resources/assets/js/**/*.ts",
-            "modules/References/resources/assets/js/**/*.d.ts",
-            "modules/References/resources/assets/js/**/*.tsx",
-        ]
+        "jsx": "react-jsx"
+    },
+    "include": [
+        "resources/js/**/*.ts",
+        "resources/js/**/*.d.ts",
+        "resources/js/**/*.tsx",
+        "modules/DocsTrack/resources/assets/js/**/*.ts",
+        "modules/DocsTrack/resources/assets/js/**/*.d.ts",
+        "modules/DocsTrack/resources/assets/js/**/*.tsx",
+        "modules/References/resources/assets/js/**/*.ts",
+        "modules/References/resources/assets/js/**/*.d.ts",
+        "modules/References/resources/assets/js/**/*.tsx",
+        "modules/IAM/resources/assets/js/**/*.ts",
+        "modules/IAM/resources/assets/js/**/*.d.ts",
+        "modules/IAM/resources/assets/js/**/*.tsx"
+, "Modules/DocsTrack/resources/assets/js/Pages/DocumTrack/RevDTracktsx"    ]
 }

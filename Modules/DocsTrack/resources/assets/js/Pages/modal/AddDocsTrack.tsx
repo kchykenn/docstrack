@@ -33,9 +33,18 @@ import {
   ArrowLeft,
   OctagonAlert,
   Send,
-  CircleGauge,
 } from "lucide-react"
 import AppLogoDepartDiv from "@/components/app-logoDepartDiv"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export function AddDocsTrack({
   open,
@@ -45,6 +54,9 @@ export function AddDocsTrack({
   autoDocsConNo,
   autoOfficeConNo,
   departments,
+  acttype,
+  departName,
+  departUser,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -52,7 +64,10 @@ export function AddDocsTrack({
   autoRouteNo: string
   autoDocsConNo: string
   autoOfficeConNo: string
-  departments: { id: number; depart_name: string }[]
+  departments: { id: number; depart_name: string }[],
+  acttype: { id: number; act_name: string }[],
+  departName: string
+  departUser: string
 }) {
   const [step, setStep] = React.useState(1)
 
@@ -64,8 +79,14 @@ export function AddDocsTrack({
     docs_type: "",
     seq_no: "yes",
     docs_destin: "",
+    act_taken: "",
     remarks: "",
+    depart_from: departName || "",
+    depart_user: departUser || "",
   })
+
+  const [alertOpen, setAlertOpen] = React.useState(false)
+  const [errorAlertOpen, setErrorAlertOpen] = React.useState(false)
 
   const [localErrors, setLocalErrors] = React.useState<{ [key: string]: string }>({})
 
@@ -104,6 +125,7 @@ export function AddDocsTrack({
 
     const newErrors: { [key: string]: string } = {}
     if (!data.docs_destin) newErrors.docs_destin = "Destination Office is required"
+    if (!data.act_taken) newErrors.act_taken = "Action Taken is required"
 
     setLocalErrors(newErrors)
 
@@ -115,19 +137,21 @@ export function AddDocsTrack({
   const handleBackStep = () => setStep((prev) => Math.max(1, prev - 1))
 
   const handleSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) e.preventDefault()
 
     post("/dtracks/store", {
       onSuccess: () => {
-        alert("Document Routed Successfully!");
-        reset();
-        router.visit("/dtracks/create");
-        onOpenChange(false);
+        reset()
+        onOpenChange(false)
+        setAlertOpen(true)
       },
       onError: () => {
+        onOpenChange(false)
+        setErrorAlertOpen(true)
+        
       },
-    });
-  };
+    })
+  }
 
 
   return (
@@ -246,6 +270,7 @@ export function AddDocsTrack({
                         className="w-full min-h-[100px]"
                         value={data.docs_subject}
                         onChange={handleChange}
+                        autoFocus
                       />
                       {(errors.docs_subject || localErrors.docs_subject) && (
                         <p className="text-red-500 text-xs">{errors.docs_subject || localErrors.docs_subject}</p>
@@ -323,32 +348,97 @@ export function AddDocsTrack({
                 <form onSubmit={handleNextConfirm}>
                   <div className="grid gap-4 mt-6">
                     {/* Destination Office */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="docs_destin">
+                          Destination Office<strong className="text-red-500">*</strong>
+                        </Label>
+                        <Select
+                          value={data.docs_destin}
+                          onValueChange={(value) => setData("docs_destin", value)}
+                        >
+                          <SelectTrigger id="docs_destin" className="w-full">
+                            <SelectValue placeholder="Select Destination Office" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Departments</SelectLabel>
+                              {departments.map((dept) => (
+                                <SelectItem key={dept.id} value={dept.depart_name}>
+                                  {dept.depart_name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        {(errors.docs_destin || localErrors.docs_destin) && (
+                          <p className="text-red-500 text-xs">
+                            {errors.docs_destin || localErrors.docs_destin}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <Label htmlFor="act_taken">
+                          Action/Taken<strong className="text-red-500">*</strong>
+                        </Label>
+                        <Select
+                          value={data.act_taken}
+                          onValueChange={(value) => setData("act_taken", value)}
+                        >
+                          <SelectTrigger id="act_taken" className="w-full">
+                            <SelectValue placeholder="Select Action Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Actions Taken</SelectLabel>
+                              {acttype.map((act) => (
+                                <SelectItem key={act.id} value={act.act_name}>
+                                  {act.act_name}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        {(errors.act_taken || localErrors.act_taken) && (
+                          <p className="text-red-500 text-xs">
+                            {errors.act_taken || localErrors.act_taken}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
                     <div className="flex flex-col gap-2">
-                      <Label htmlFor="docs_destin">
-                        Destination Office<strong className="text-red-500">*</strong>
+                      <Label htmlFor="depart_from">
+                        Department User From.<strong className="text-red-500">*</strong>
                       </Label>
-                      <Select
-                        value={data.docs_destin}
-                        onValueChange={(value) => setData("docs_destin", value)}
-                      >
-                        <SelectTrigger id="docs_destin" className="w-full">
-                          <SelectValue placeholder="Select Destination Office" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Departments</SelectLabel>
-                            {departments.map((dept) => (
-                              <SelectItem key={dept.id} value={dept.depart_name}>
-                                {dept.depart_name}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      {(errors.docs_destin || localErrors.docs_destin) && (
-                        <p className="text-red-500 text-xs">
-                          {errors.docs_destin || localErrors.docs_destin}
-                        </p>
+                      <Input
+                        id="depart_from"
+                        name="depart_from"
+                        value={data.depart_from}
+                        readOnly
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                      {(errors.depart_from || localErrors.depart_from) && (
+                        <p className="text-red-500 text-xs">{errors.depart_from || localErrors.depart_from}</p>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <Label htmlFor="depart_user">
+                        Department User<strong className="text-red-500">*</strong>
+                      </Label>
+                      <Input
+                        id="depart_user"
+                        name="depart_user"
+                        value={data.depart_user
+                          .split(' ')
+                          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                          .join(' ')}
+                        readOnly
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
+                      {(errors.depart_user || localErrors.depart_user) && (
+                        <p className="text-red-500 text-xs">{errors.depart_user || localErrors.depart_user}</p>
                       )}
                     </div>
 
@@ -384,18 +474,17 @@ export function AddDocsTrack({
               {step === 3 && (
                 <div className="flex flex-col items-center justify-center min-h-[250px]">
                   {/* Fixed container prevents jump */}
-                  <div className="w-20 h-20 flex items-center justify-center">
+                  <div className="w-15 h-15 flex items-center justify-center">
                     <AnimatePresence>
                       {processing ? (
                         <motion.div
                           key="spinner"
+                          initial={{ rotate: 0 }} // <-- make sure it starts at 0
                           animate={{ rotate: 360 }}
                           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                          className="w-full h-full flex items-center justify-center"
-                          style={{ originX: 0.5, originY: 0.5 }}
-                        >
-                          <CircleGauge className="w-full h-full text-blue-600" />
-                        </motion.div>
+                          className="w-16 h-16 rounded-full border-[4px] border-blue-600 border-t-transparent box-border"
+                          style={{ aspectRatio: "1 / 1" }} // <-- always force perfect circle
+                        />
                       ) : (
                         <motion.div
                           key="icon"
@@ -409,7 +498,6 @@ export function AddDocsTrack({
                       )}
                     </AnimatePresence>
                   </div>
-
                   <h2 className="text-lg font-bold mb-2 text-center">
                     Are you sure you want to route this document?
                   </h2>
@@ -435,6 +523,63 @@ export function AddDocsTrack({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Success Alert */}
+      <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              Success
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="block text-xl font-bold">
+                Document Routed Successfully!
+              </span>
+              <span className="block text-sm text-gray-700">
+                Click okay to proceed to add another document.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction asChild>
+              <Button
+                className="bg-green-600 hover:bg-green-700 text-white"
+                onClick={() => {
+                  setAlertOpen(false)
+                  router.visit("/dtracks/create")
+                }}
+              >
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Okay
+              </Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Error Alert */}
+      <AlertDialog open={errorAlertOpen} onOpenChange={setErrorAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-600">⚠️ Error</AlertDialogTitle>
+            <AlertDialogDescription>
+              <span className="block text-xl font-bold">
+                Failed to route document!
+              </span>
+              <span className="block text-sm text-gray-700">
+                Please check required fields or make sure values are unique.
+              </span>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setErrorAlertOpen(false)}>
+              Okay
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </Dialog>
   )
 }
