@@ -18,22 +18,38 @@ class DocsTrackController extends Controller
         $user = Auth::user();
         $departName = $user->depart_name;
 
-        $dtracks = DB::table('tbl_dtrack')
-            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'act_taken', 'depart_from', 'docs_destin', 'ts_created_at')
-            ->orderBy('route_no', 'desc')
-            ->get();
-
-        $denctr = DB::table('tbl_docsenctr')
-            ->select('route_no', 'docs_con_no', 'office_con_no', 'docs_subject', 'docs_type', 'act_taken', 'depart_from', 'docs_destin', 'status', 'ts_created_at')
-            ->orderBy('route_no', 'desc')
+        $dtracks = DB::table('tbl_dtrack as d')
+            ->leftJoin(DB::raw('(
+            SELECT t1.route_no, t1.status, t1.ts_created_at
+            FROM tbl_docsenctr t1
+            INNER JOIN (
+                SELECT route_no, MAX(ts_created_at) as latest_date
+                FROM tbl_docsenctr
+                GROUP BY route_no
+            ) t2 ON t1.route_no = t2.route_no AND t1.ts_created_at = t2.latest_date
+        ) as e'), 'd.route_no', '=', 'e.route_no')
+            ->select(
+                'd.route_no',
+                'd.docs_con_no',
+                'd.office_con_no',
+                'd.docs_subject',
+                'd.docs_type',
+                'd.act_taken',
+                'd.depart_from',
+                'd.docs_destin',
+                'd.ts_created_at',
+                'e.status',
+                'e.ts_created_at as latest_status_date'
+            )
+            ->orderBy('d.route_no', 'desc')
             ->get();
 
         return Inertia::render('DocsTrack::DocumTrack/index', [
             'dtracks' => $dtracks,
-            'denctr' => $denctr,
             'depart_name' => $departName,
         ]);
     }
+
 
     public function enctr($routeNo)
     {

@@ -10,7 +10,6 @@ import {
 import JsBarcode from "jsbarcode";
 import { Dtrack, Row } from "@/types";
 import logo from "@assets/img/logos/Department_of_Health.png";
-import { Input } from "@headlessui/react";
 
 const styles = StyleSheet.create({
   page: { flexDirection: "column", padding: 20, fontSize: 8 },

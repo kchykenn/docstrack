@@ -58,6 +58,26 @@ export const getColumns = (
     { accessorKey: "depart_from", header: "From" },
     { accessorKey: "docs_destin", header: "To" },
     {
+      accessorKey: "status",
+      header: "Status",
+      cell: ({ getValue }) => {
+        const status = Number(getValue());
+
+        switch (status) {
+          case 0:
+            return <span className="text-red-600 font-semibold">Pending</span>;
+          case 1:
+            return <span className="text-orange-500 font-semibold">Received</span>;
+          case 2:
+            return <span className="text-green-600 font-semibold">End/Finish</span>;
+          default:
+            return <span className="text-gray-500">Unknown</span>;
+        }
+      },
+    },
+
+
+    {
       accessorKey: "ts_created_at",
       header: "Date Created/Routed",
       cell: ({ getValue }) => {
