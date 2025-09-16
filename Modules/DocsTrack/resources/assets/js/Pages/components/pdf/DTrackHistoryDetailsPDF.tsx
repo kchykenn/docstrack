@@ -148,7 +148,7 @@ const DTrackHistoryDetailsPDF: React.FC<Props> = ({ data }) => {
                   <Text>Knowledge Management - ICT - DTRACK-4.0</Text>
                 </View>
                 <View style={[styles.cell, { flex: 3 }]}>
-                  <Text>ROUTING SLIP</Text>
+                  <Text>Documents Tracking History</Text>
                 </View>
                 <View style={{ flex: 3, flexDirection: "row" }}>
                   <View style={[styles.cell, { flex: 2 }]}>
