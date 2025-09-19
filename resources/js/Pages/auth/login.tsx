@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-// import AppLogoIconBG from '@/components/app-logo-icon-bg';
+import AppLogoIconBG from '@/components/app-logo-icon-bg';
 import AppLogoDOH from '@/components/app-logo-assess_doh';
 import AppLogoBP from '@/components/app-logo-assess_bp';
 import AppLogoIconDocs from '@/components/app-logo-assess_mental';
@@ -41,7 +41,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
             {/* Background */}
-            {/* <AppLogoIconBG className="absolute inset-0 w-full h-full object-cover opacity-100 z-0" /> */}
+            <AppLogoIconBG className="absolute inset-0 w-full h-full object-cover opacity-100 z-0" />
             <div className="absolute inset-0 bg-black/40 z-[1]" />
 
             {/* Content */}
