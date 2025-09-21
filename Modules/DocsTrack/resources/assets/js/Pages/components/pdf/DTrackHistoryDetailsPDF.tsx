@@ -85,7 +85,7 @@ const DTrackHistoryDetailsPDF: React.FC<Props> = ({ data }) => {
 
     if (diffDays <= 2) return "#008000";
     if (diffDays == 3) return "#FFA500";
-    if (diffDays > 3)  return "#FF0000";
+    if (diffDays > 3) return "#FF0000";
   };
 
   return (
@@ -203,6 +203,9 @@ const DTrackHistoryDetailsPDF: React.FC<Props> = ({ data }) => {
             <Text style={{ fontWeight: "bold" }}>DATE RECEIVED</Text>
           </View>
           <View style={[styles.cell, { flex: 2 }]}>
+            <Text style={{ fontWeight: "bold" }}>RECEIVED BY</Text>
+          </View>
+          <View style={[styles.cell, { flex: 2 }]}>
             <Text style={{ fontWeight: "bold" }}>DATE RE-ROUTED</Text>
           </View>
           <View style={[styles.cell, { flex: 2 }]}>
@@ -240,6 +243,9 @@ const DTrackHistoryDetailsPDF: React.FC<Props> = ({ data }) => {
             </View>
             <View style={[styles.cell, { flex: 2 }]}>
               <Text>{formatDate((row as any).date_received)}</Text>
+            </View>
+            <View style={[styles.cell, { flex: 2 }]}>
+              <Text>{row.received_by}</Text>
             </View>
             <View style={[styles.cell, { flex: 2 }]}>
               <Text>{formatDate((row as any).date_rerouted)}</Text>

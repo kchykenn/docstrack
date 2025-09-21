@@ -232,8 +232,10 @@ class DocsTrackController extends Controller
     {
         $docsEnctr = DocsEnctr::findOrFail($id);
 
+        $user = Auth::user();
         $docsEnctr->status = 1;
         $docsEnctr->date_received = now('Asia/Manila')->format('Y-m-d H:i:s');
+        $docsEnctr->received_by = $user->first_name . ' ' . $user->middle_name . ' ' . $user->last_name; // or $user->id
         $docsEnctr->save();
 
         return redirect()->back()
