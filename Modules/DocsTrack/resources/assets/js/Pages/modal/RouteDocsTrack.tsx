@@ -188,7 +188,7 @@ export function RouteDocsTrack({
 
                     <div className="flex flex-col gap-2">
                       <Label htmlFor="docs_subject">Subject<strong className="text-red-500">*</strong></Label>
-                      <Input id="docs_subject" name="docs_subject" value={data.docs_subject} readOnly className="bg-gray-100 cursor-not-allowed" onChange={handleChange}/>
+                      <Input id="docs_subject" name="docs_subject" value={data.docs_subject} readOnly className="bg-gray-100 cursor-not-allowed" onChange={handleChange} />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -398,7 +398,9 @@ export function RouteDocsTrack({
                 className="bg-green-600 hover:bg-green-700 text-white"
                 onClick={() => {
                   setAlertOpen(false);
-                  router.visit("/dtracks/recev");
+                  router.visit("/dtracks/recev", {
+                    onFinish: () => window.location.reload(),
+                  });
                 }}
               >
                 <CheckCircle className="mr-2 h-4 w-4" />
