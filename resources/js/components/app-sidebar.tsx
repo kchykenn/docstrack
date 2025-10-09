@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { File, Folder, Monitor, LayoutGrid, Book } from 'lucide-react'; // Added Book icon
+import { File, Folder, Monitor, LayoutGrid } from 'lucide-react'; // Added Book icon
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [

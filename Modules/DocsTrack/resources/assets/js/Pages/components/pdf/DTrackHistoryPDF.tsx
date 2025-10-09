@@ -13,7 +13,7 @@ import logo from "@assets/img/logos/Department_of_Health.png";
 
 const styles = StyleSheet.create({
   page: { flexDirection: "column", padding: 20, fontSize: 10 },
-  table: { display: "table", width: "100%", borderWidth: 0.5 },
+  table: { display: "flex", width: "100%", borderWidth: 0.5 },
   row: { flexDirection: "row" },
   cell: {
     borderWidth: 0.5,

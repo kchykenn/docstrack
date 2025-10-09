@@ -5,6 +5,17 @@ Create Docs Type References for Dynamic Adding
 
 -Create DTrack Forms for Details Route
 
+//if the logo not responding in the reactpdf renderer
+add this in vite.config.ts // change the @assets target to the module you build
+ then in resources inside the module put the assets / img/ logos  
+    resolve: {
+        alias: {
+            'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
+            '@assets': resolve(__dirname, 'Modules/DocsTrack/resources/assets'),
+            '@': resolve(__dirname, 'resources/js'),
+        },
+    },
+
 install npm install framer-motion : for animate in sending or routing the forms
 npm install @react-pdf/renderer --save for pdf convert html to pdf viewer
 npm install jsbarcode canvas --for  barcode
