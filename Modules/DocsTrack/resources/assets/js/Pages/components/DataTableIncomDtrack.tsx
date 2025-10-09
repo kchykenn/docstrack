@@ -13,7 +13,7 @@ import {
     useReactTable,
     VisibilityState,
 } from "@tanstack/react-table"
-import { ChevronDown, HomeIcon, Inbox, MoreHorizontal, Send, Copy, Eye, CheckCircle, Trash2 } from "lucide-react"
+import { ChevronDown, HomeIcon, Inbox, MoreHorizontal, Send, Copy, Eye, CheckCircle, Trash2, Mail } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -208,6 +208,10 @@ export function DataTableIncomDtrack({ data }: Props) {
                         <HomeIcon className="w-4 h-4 mr-2" />
                         Back to Master Page
                     </Button>
+                    <Button onClick={() => router.visit("/dtracks/recev")}>
+                        <Mail className="w-4 h-4 mr-2" />
+                        Received Documents
+                    </Button>
                     <Button onClick={() => router.visit("/dtracks/create")}>
                         <Send className="w-4 h-4 mr-2" />
                         Route New Documents
@@ -338,7 +342,7 @@ export function DataTableIncomDtrack({ data }: Props) {
                             onClick={() => {
                                 setReceiveSuccess(false)
                                 router.visit("/dtracks/incoming", {
-                                    onFinish: () => window.location.reload(), 
+                                    onFinish: () => window.location.reload(),
                                 })
                             }}
                         >
